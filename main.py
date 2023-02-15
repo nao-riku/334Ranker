@@ -698,8 +698,8 @@ def start():
         if start_now < times[i][0]:
             start_time = times[i][0]
             end_time = times[i][1]
-            #start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
-            #end_time = times[i][0]
+            start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
+            end_time = times[i][0]
             
             if i != 0:
                 get_allresult()

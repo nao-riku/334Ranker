@@ -20,8 +20,8 @@ post_url = ""
 post_body = {}
 today_result = {}
 world_rank = {}
-
 load_res_yet = True
+
 start_now = datetime.datetime.now()
 start_time = ""
 end_time = ""
@@ -32,15 +32,17 @@ def get_allresult():
     load_res_yet = False
     try:
         r = requests.get(os.environ['GAS_URL'])
-        today_result = r.json()["result"]
+        r_json = r.json()
         time.sleep(0.5)
-        world_rank = r.json()["rank"]
-        time.sleep(0.5)
+        today_result = r_json["result"]
+        world_rank = r_json["rank"]
     except Exception as e:
         print(e)
         print(e.args)
     if today_result == {} or world_rank == {}:
         load_res_yet = True
+    else:
+        print("loaded json")
 
 
 def tweet(driver):
@@ -231,7 +233,7 @@ def has_rank(key, name, item):
 def get_result(key, name):
     previous = datetime.datetime.now() - datetime.timedelta(hours=3, minutes=20)
     if today_result == {}:
-        return False
+        return "ランキングは準備中です。しばらくお待ちください"
     if key in today_result:
         return name + "\n\n" + previous.date().strftime('%Y/%m/%d') + "の334結果\nresult: +" + today_result[key][2] + " [sec]\nrank: " + today_result[key][0] + " / " + today_result["参加者数"][0]
     else:
@@ -281,6 +283,8 @@ def receive(dict, driver):
                     if user_name == "":
                         user_name = "@" + item["status"]["data"]["user"]["screen_name"]
                     rep_text = has_rank(user_id, user_name, item)
+                    if rep_text == False:
+                        rep_text = get_result(user_id, user_name)
                 else:
                     user_id = item["status"]["data"]["in_reply_to_user_id_str"]
                     user_name = ""
@@ -304,6 +308,7 @@ def receive(dict, driver):
                             rep_text = "ツイート時刻: " + TimeToStr(orig_time)
 
             if rep_text != False:
+                print(item["status"]["data"]["user"]["name"])
                 req = copy.deepcopy(post_body)
                 req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]
                 req["variables"]["tweet_text"] = rep_text
@@ -476,9 +481,6 @@ function final(id) {
     req["variables"]["tweet_text"] = text
     del req["variables"]['reply']
     threading.Thread(target=reply, args=(req, driver,)).start()
-    if start_time < datetime.datetime.now():
-        start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
-    threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
 
 
 
@@ -653,9 +655,14 @@ function get_tweets2(max_id) {
 
 
 def notice(driver):
+    global today_result, world_rank, load_res_yet
     notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
     while True:
         if notice_time < datetime.datetime.now():
+            today_result = {}
+            world_rank = {}
+            load_res_yet = True
+            
             req = copy.deepcopy(post_body)
             req["variables"]["tweet_text"] = "334観測中 (" + datetime.datetime.now().date().strftime('%Y/%m/%d') + ")"
             del req["variables"]['reply']
@@ -685,8 +692,7 @@ def start():
 
             
     times = [
-        #[datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0)], #日付超えてからの臨時実行はこれ入れてifをTrueに
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 35, 30), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50
@@ -698,15 +704,22 @@ def start():
         if start_now < times[i][0]:
             start_time = times[i][0]
             end_time = times[i][1]
-            #start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
-            #end_time = times[i][0]
             
-            if i != 0:
+            if i != 0 or (len(sys.argv) != 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0)):
                 get_allresult()
                 login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
+                if len(sys.argv) != 1:
+                    start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
+                    end_time = times[i][0]
+                print(start_time)
                 threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
             else:
                 login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
+                if len(sys.argv) != 1:
+                    start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
+                    end_time = times[i][0]
+                print(start_time)
+                threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
                 notice(driver)
                 get_334(driver)
                 

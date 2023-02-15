@@ -27,7 +27,6 @@ start_time = ""
 end_time = ""
 
 
-
 def get_allresult():
     global today_result, world_rank, load_res_yet
     load_res_yet = False
@@ -405,7 +404,7 @@ xhr.onreadystatechange = function () {
 
 
 
-def postrank(bin, driver):
+def postrank(bin, driver, text):
     global post_body, start_time, end_time
 
     res = driver.execute_async_script("""
@@ -477,19 +476,17 @@ function final(id) {
     """, bin)
     req = copy.deepcopy(post_body)
     req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
-    req["variables"]["tweet_text"] = "Today's top 30"
+    req["variables"]["tweet_text"] = text
     del req["variables"]['reply']
     threading.Thread(target=reply, args=(req, driver,)).start()
-    print(start_time)
     if start_time < datetime.datetime.now():
         start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
-    print(start_time)
     threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
 
 
 
-def browser2():
-    time.sleep(90)
+def browser2(driver):
+    driver.quit()
 
 
 def browser(tweets, driver2):
@@ -515,13 +512,12 @@ def browser(tweets, driver2):
         else:
             Alert(driver).accept()
             bin = driver.execute_script('return window.res')
-            postrank(bin, driver2)
+            postrank(bin, driver2, "Today's top 30")
             wait3 = WebDriverWait(driver, 180).until(EC.alert_is_present())
             Alert(driver).accept()
             break
             
-    driver.quit()
-    #threading.Thread(target=browser2).start()
+    browser2(driver)
         
 
 
@@ -540,7 +536,7 @@ def make_ranking(dict, driver):
                 result = '{:.3f}'.format(res)
                 if winner == "" or result == winner:
                     winner = result
-                    #threading.Thread(target=retweet, args=(item["id_str"], driver,)).start()
+                    threading.Thread(target=retweet, args=(item["id_str"], driver,)).start()
 
                 img_src = "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
                 if item["user"]["profile_image_url_https"] != "":
@@ -698,7 +694,7 @@ def start():
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0)], #18:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0)], #18:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1)], #22:50
     ]
     for i in range(len(times)):

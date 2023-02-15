@@ -694,16 +694,16 @@ def start():
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0)], #18:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0)], #18:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1)], #22:50
     ]
     for i in range(len(times)):
         if start_now < times[i][0]:
             start_time = times[i][0]
             end_time = times[i][1]
-            start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
+            #start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
             
-            if False:#i != 0:
+            if i != 0:
                 get_allresult()
                 login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
                 threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()

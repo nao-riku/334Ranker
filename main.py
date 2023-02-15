@@ -39,8 +39,6 @@ def get_allresult():
         print(e.args)
     if today_result == {} or world_rank == {}:
         load_res_yet = True
-    else:
-        print("Got Result")
 
 
 def tweet(driver):
@@ -115,7 +113,6 @@ def login_twitter(account, password, tel, driver):
 
 def reply(req, driver):
     global post_url
-    print(req)
     res = driver.execute_async_script("""
 var url = arguments[0];
 
@@ -304,7 +301,6 @@ def receive(dict, driver):
                             orig_time = TweetIdTime(int(item["status"]["data"]["in_reply_to_status_id_str"]))
                             rep_text = "ツイート時刻: " + TimeToStr(orig_time)
 
-            print(rep_text)
             if rep_text != False:
                 req = copy.deepcopy(post_body)
                 req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]
@@ -316,7 +312,6 @@ def receive(dict, driver):
 def interval(since, until, end, index, driver):
     while True:
         if until < datetime.datetime.now():
-            print(until)
             if index % 60 == 0 and (end - until).total_seconds() > 1:
                 add = 2
             else:
@@ -531,7 +526,6 @@ def make_ranking(dict, driver):
             users.append(item["user"]["id_str"])
             time2 = TweetIdTime(int(item["id_str"]))
             res = (time2 - time1).total_seconds()
-            print(item["user"]["name"], '{:.3f}'.format(res))
             if 0 <= res and res < 1:
                 result = '{:.3f}'.format(res)
                 if winner == "" or result == winner:
@@ -682,7 +676,6 @@ def start():
             driver = webdriver.Chrome(options = options)
             
         except Exception as e:
-            driver.quit()
             print(e)
             print(e.args)
         else:

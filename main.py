@@ -18,7 +18,7 @@ import sys
 
 post_url = ""
 post_body = {}
-today_result = {}   #2:50までに削除
+today_result = {}
 world_rank = {}
 
 load_res_yet = True
@@ -690,6 +690,7 @@ def start():
 
             
     times = [
+        #[datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0)], #日付超えてからの臨時実行はこれ入れてifをTrueに
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 35, 30), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
@@ -704,7 +705,6 @@ def start():
             end_time = times[i][1]
             #start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
             #end_time = times[i][0]
-            #日付超えてからの臨時実行はこれ入れる[datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0)]
             
             if i != 0:
                 get_allresult()

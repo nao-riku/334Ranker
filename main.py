@@ -33,7 +33,9 @@ def get_allresult():
     try:
         r = requests.get(os.environ['GAS_URL'])
         today_result = r.json()["result"]
+        time.sleep(0.5)
         world_rank = r.json()["rank"]
+        time.sleep(0.5)
     except Exception as e:
         print(e)
         print(e.args)

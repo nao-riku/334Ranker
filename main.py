@@ -124,6 +124,7 @@ def login_twitter(account, password, tel, driver):
 
 
 def reply(req, driver):
+    print("reply start", datetime.datetime.now())
     global post_url
     res = driver.execute_async_script("""
 var url = arguments[0];
@@ -415,6 +416,7 @@ xhr.onreadystatechange = function () {
 
 
 def postrank(bin, driver, text):
+    print("postrank start", datetime.datetime.now())
     global post_body, start_time, end_time
 
     res = driver.execute_async_script("""
@@ -484,6 +486,7 @@ function final(id) {
     xhr.send()
 }
     """, bin)
+    print("res get", datetime.datetime.now())
     req = copy.deepcopy(post_body)
     req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
     req["variables"]["tweet_text"] = text
@@ -497,6 +500,7 @@ def browser2(driver):
 
 
 def browser(tweets, driver2):
+    print("browser start", datetime.datetime.now())
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
@@ -511,6 +515,7 @@ def browser(tweets, driver2):
             driver.get(os.environ['HTML_URL'])
             wait = WebDriverWait(driver, 10).until(EC.alert_is_present())
             Alert(driver).accept()
+            print("html get", datetime.datetime.now())
             driver.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
             wait2 = WebDriverWait(driver, 180).until(EC.alert_is_present())
         except Exception as e:
@@ -518,7 +523,9 @@ def browser(tweets, driver2):
             print(e.args)
         else:
             Alert(driver).accept()
+            print("alert get", datetime.datetime.now())
             bin = driver.execute_script('return window.res')
+            print("bin get", datetime.datetime.now())
             postrank(bin, driver2, "Today's top 30")
             wait3 = WebDriverWait(driver, 180).until(EC.alert_is_present())
             Alert(driver).accept()
@@ -529,6 +536,7 @@ def browser(tweets, driver2):
 
 
 def make_ranking(dict, driver):
+    print("make_ranking start", datetime.datetime.now())
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)
     winner = ""
     users = []
@@ -563,11 +571,13 @@ def make_ranking(dict, driver):
     
 
 def get_334(driver):
+    print("get_334 start", datetime.datetime.now())
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
     time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
     get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 3)
     while True:
         if get_time < datetime.datetime.now():
+            print("get_334 res start", datetime.datetime.now())
             res = driver.execute_async_script("""
 var url1 = 'https://api.twitter.com/1.1/search/'
 var url2 = '.json?count=100&result_type=recent&q=334 since:""" + time1.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + time2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -filter:replies'
@@ -656,6 +666,7 @@ function get_tweets2(max_id) {
     }
 }
             """)
+            print("get_334 res end", datetime.datetime.now())
             make_ranking(res, driver)
             break
         time.sleep(0.01)
@@ -664,7 +675,7 @@ function get_tweets2(max_id) {
 
 def notice(driver):
     global today_result, world_rank, load_res_yet
-    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 5, 5, 0)
+    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}
@@ -700,7 +711,7 @@ def start():
 
             
     times = [
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 5, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 6, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 5, 30, 0)], #2:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50

@@ -1,0 +1,722 @@
+import chromedriver_binary
+from seleniumwire import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+import threading
+import time
+import datetime
+import json
+import copy
+import requests
+import os
+import sys
+
+post_url = ""
+post_body = {}
+today_result = {}   #2:50までに削除
+world_rank = {}
+
+load_res_yet = True
+start_now = datetime.datetime.now()
+start_time = ""
+end_time = ""
+
+
+
+def get_allresult():
+    global today_result, world_rank, load_res_yet
+    load_res_yet = False
+    try:
+        r = requests.get(os.environ['GAS_URL'])
+        today_result = r.json()["result"]
+        world_rank = r.json()["rank"]
+    except Exception as e:
+        print(e)
+        print(e.args)
+    if today_result == {} or world_rank == {}:
+        load_res_yet = True
+    else:
+        print("Got Result")
+
+
+def tweet(driver):
+    global post_body, post_url
+    for _ in range(3):
+        try:
+            driver.get('https://twitter.com/Rank334_2/status/1624490398730321920')
+            element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
+            time.sleep(1)
+
+            element_box = driver.find_element(By.CSS_SELECTOR, "[role=textbox]")
+            element_box.send_keys("a")
+            time.sleep(2) 
+            
+            driver.find_element(By.CSS_SELECTOR, "[data-testid=tweetButtonInline]").click()
+            time.sleep(20)
+
+
+            for request in driver.requests:
+                if request.response:
+                    if "CreateTweet" in request.url:
+                        post_url = request.url
+                        post_body = json.loads(request.body)
+                        break
+
+            time.sleep(3)
+
+        except Exception as e:
+            print(e)
+            print(e.args)
+        else:
+            break
+	
+    
+
+def login_twitter(account, password, tel, driver):
+    for _ in range(3):
+        try:
+            driver.get('https://twitter.com/i/flow/login')
+            driver.maximize_window()
+            element = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.NAME, "text")))
+            time.sleep(1)
+            
+            element_account = driver.find_element(By.TAG_NAME, "input")
+            element_account.send_keys(account)
+            time.sleep(2) 
+            element_account.send_keys(Keys.ENTER)
+            time.sleep(20)
+
+            element_pass = driver.find_elements(By.TAG_NAME, "input")[1]
+            element_pass.send_keys(password)
+            time.sleep(2)
+            element_pass.send_keys(Keys.ENTER)
+            time.sleep(20)
+
+            element_tel = driver.find_elements(By.NAME, "text")
+            if len(element_tel) > 0:
+                element_tel[0].send_keys(tel)
+                time.sleep(2) 
+                element_tel[0].send_keys(Keys.ENTER)
+                time.sleep(20)
+
+            tweet(driver)
+        
+        except Exception as e:
+            print(e)
+            print(e.args)
+        else:
+            break
+
+
+
+def reply(req, driver):
+    global post_url
+    print(req)
+    res = driver.execute_async_script("""
+var url = arguments[0];
+
+var cookie = document.cookie.replaceAll(" ", "").split(";")
+var token = ""
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+
+var callback = arguments[arguments.length - 1];
+
+var xhr = new XMLHttpRequest();
+xhr.open('POST', url);
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
+xhr.setRequestHeader('x-csrf-token', token)
+xhr.setRequestHeader('x-twitter-active-user', 'yes')
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
+xhr.setRequestHeader('x-twitter-client-language', 'ja')
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.withCredentials = true
+
+var data = JSON.stringify(arguments[1]);
+xhr.send(data);
+
+xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        callback(xhr.responseText)
+    }
+}
+
+""", post_url, req)
+
+
+
+def get_kyui(pt):
+    if pt < 500:
+        rank = "E"
+    elif pt < 1000:
+        rank = "E+"
+    elif pt < 1500:
+        rank = "D"
+    elif pt < 2000:
+        rank = "D+"
+    elif pt < 2500:
+        rank = "C"
+    elif pt < 3000:
+        rank = "C+"
+    elif pt < 3500:
+        rank = "B"
+    elif pt < 4000:
+        rank = "B+"
+    elif pt < 4500:
+        rank = "A"
+    elif pt < 5000:
+        rank = "A+"
+    elif pt < 5500:
+        rank = "S1"
+    elif pt < 6000:
+        rank = "S2"
+    elif pt < 6500:
+        rank = "S3"
+    elif pt < 7000:
+        rank = "S4"
+    elif pt < 7500:
+        rank = "S5"
+    elif pt < 8000:
+        rank = "S6"
+    elif pt < 8500:
+        rank = "S7"
+    elif pt < 9000:
+        rank = "S8"
+    elif pt < 9500:
+        rank = "S9"
+    else:
+        rank = "RoR"
+	
+    return rank
+
+
+
+def get_rank(key, name):
+    if world_rank == {}:
+        return False
+    if key in world_rank:
+        if world_rank[key][4] != world_rank[key][6]:
+            rep_text2 = "\n参考記録: " + world_rank[key][6]
+        else:
+            rep_text2 = ""
+
+        pt = float(world_rank[key][2])
+        rank = get_kyui(pt)
+        pt2 = float(world_rank[key][4])
+        rank2 = get_kyui(pt2)
+                                                    
+        return name + "\n\n級位: " + rank + "\n⠀最高pt: " + world_rank[key][2] + "\n⠀歴代: " + str(world_rank[key][3]) + " / " + world_rank["累計"][0] + "\n⠀現在pt: " + world_rank[key][4] + " (" + rank2 + "帯)\n⠀世界ランク: " + str(world_rank[key][5]) + " / " + world_rank["現在"][0] + rep_text2 +\
+                        "\n出場試合数: " + str(world_rank[key][7]) + "\n自己ベスト: " + world_rank[key][0] + " (" + str(world_rank[key][1]) + "回)\n戦績: 🥇×" + str(world_rank[key][8]) + " 🥈×" + str(world_rank[key][9]) + " 🥉×" + str(world_rank[key][10]) + " 📋×" + str(world_rank[key][11])
+    else:
+        return name + "\n\n最高pt: -\n歴代: - / " + world_rank["累計"][0] + "\n現在pt: -\n世界ランク: - / " + world_rank["現在"][0] + "\n出場試合数: 0\n自己ベスト: -\n戦績: 🥇×0 🥈×0 🥉×0 📋×0"
+
+
+def has_rank(key, name, item):
+    text = item["status"]["data"]["full_text"].lower()
+    mentions = item["status"]["data"]["entities"]["user_mentions"]
+    for user in mentions:
+        text = text.replace("@" + user["screen_name"].lower(), "")
+    if "ランク" in text or "ﾗﾝｸ" in text or "らんく" in text or "rank" in text:
+        return get_rank(key, name)
+    else:
+        return False
+
+
+
+def get_result(key, name):
+    previous = datetime.datetime.now() - datetime.timedelta(hours=3, minutes=20)
+    if today_result == {}:
+        return False
+    if key in today_result:
+        return name + "\n\n" + previous.date().strftime('%Y/%m/%d') + "の334結果\nresult: +" + today_result[key][2] + " [sec]\nrank: " + today_result[key][0] + " / " + today_result["参加者数"][0]
+    else:
+        return name + "\n\n" + previous.date().strftime('%Y/%m/%d') + "の334結果\nresult: DQ\nrank: DQ / " + today_result["参加者数"][0]
+
+
+
+def TweetIdTime(id):
+    epoch = ((id >> 22) + 1288834974657) / 1000.0
+    d = datetime.datetime.fromtimestamp(epoch)
+    return d
+
+
+def TimeToStr(d):
+    stringTime = ""
+    stringTime += '{0:02d}'.format(d.hour)
+    stringTime += ':'
+    stringTime += '{0:02d}'.format(d.minute)
+    stringTime += ':'
+    stringTime += '{0:02d}'.format(d.second)
+    stringTime += '.'
+    stringTime += '{0:03d}'.format(int(d.microsecond / 1000))
+    return stringTime
+
+
+
+def receive(dict, driver):
+    global post_body, post_url
+    ranker_id = "1558892196069134337"
+
+    for item in dict:
+	    
+        if item["status"]["data"]["user"]["id_str"] != ranker_id:
+            rep_text = False
+            if item["status"]["data"]["in_reply_to_status_id_str"] == None:
+                user_id = item["status"]["data"]["user"]["id_str"]
+                user_name = item["status"]["data"]["user"]["name"]
+                if user_name == "":
+                    user_name = "@" + item["status"]["data"]["user"]["screen_name"]
+                rep_text = has_rank(user_id, user_name, item)
+                if rep_text == False:
+                    rep_text = get_result(user_id, user_name)
+            else:
+                if item["status"]["data"]["in_reply_to_user_id_str"] == ranker_id:
+                    user_id = item["status"]["data"]["user"]["id_str"]
+                    user_name = item["status"]["data"]["user"]["name"]
+                    if user_name == "":
+                        user_name = "@" + item["status"]["data"]["user"]["screen_name"]
+                    rep_text = has_rank(user_id, user_name, item)
+                else:
+                    user_id = item["status"]["data"]["in_reply_to_user_id_str"]
+                    user_name = ""
+                    text_range = item["status"]["data"]["display_text_range"]
+                    mentions = item["status"]["data"]["entities"]["user_mentions"]
+                    flag = False 
+                    for user in mentions:
+                        if user["id_str"] == ranker_id and text_range[0] <= user["indices"][0] and user["indices"][1] <= text_range[1]:
+                            flag = True
+                        if user["id_str"] == user_id:
+                            user_name = user["name"]
+                    if flag:
+                        if user_name == "":
+                            if user_id == item["status"]["data"]["user"]["id_str"]:
+                                user_name = item["status"]["data"]["user"]["name"]
+                            if user_name == "":
+                                user_name = "@" + item["status"]["data"]["in_reply_to_screen_name"]
+                        rep_text = has_rank(user_id, user_name, item)
+                        if rep_text == False:
+                            orig_time = TweetIdTime(int(item["status"]["data"]["in_reply_to_status_id_str"]))
+                            rep_text = "ツイート時刻: " + TimeToStr(orig_time)
+
+            print(rep_text)
+            if rep_text != False:
+                req = copy.deepcopy(post_body)
+                req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]
+                req["variables"]["tweet_text"] = rep_text
+                threading.Thread(target=reply, args=(req, driver,)).start()
+
+
+
+def interval(since, until, end, index, driver):
+    while True:
+        if until < datetime.datetime.now():
+            print(until)
+            if index % 60 == 0 and (end - until).total_seconds() > 1:
+                add = 2
+            else:
+                add = 1
+            if until < end:
+                threading.Thread(target=interval, args=(until, until + datetime.timedelta(seconds = add), end, index + 1, driver,)).start()
+            res = driver.execute_async_script("""
+var url = 'https://api.twitter.com/1.1/search/universal.json?q=@rank334 since:""" + since.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote&count=100&result_type=recent&tweet_mode=extended'
+
+var cookie = document.cookie.replaceAll(" ", "").split(";")
+var token = ""
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+
+var callback = arguments[arguments.length - 1];
+
+var xhr = new XMLHttpRequest();
+xhr.open('GET', url);
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
+xhr.setRequestHeader('x-csrf-token', token)
+xhr.setRequestHeader('x-twitter-active-user', 'yes')
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
+xhr.setRequestHeader('x-twitter-client-language', 'ja')
+xhr.withCredentials = true
+
+xhr.onload = function () {
+    callback(xhr.responseText)
+}
+
+xhr.send();
+            """, index % 10)
+            out = json.loads(res)["modules"]
+            if out != []:
+                receive(out, driver)
+            if datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 35, 30) < until and load_res_yet:
+                get_allresult()
+            break
+        time.sleep(0.01)
+
+
+
+def retweet(id, driver):
+    
+    try:
+        data = {
+            "variables": {
+                "tweet_id": id,
+                "dark_request": False
+            },
+            "queryId": "ojPdsZsimiJrUGLR1sjUtA"
+        }
+    
+        res = driver.execute_async_script("""
+var url = 'https://api.twitter.com/graphql/ojPdsZsimiJrUGLR1sjUtA/CreateRetweet'
+
+var cookie = document.cookie.replaceAll(" ", "").split(";")
+var token = ""
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+
+var xhr = new XMLHttpRequest();
+xhr.open('POST', url);
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
+xhr.setRequestHeader('x-csrf-token', token)
+xhr.setRequestHeader('x-twitter-active-user', 'yes')
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
+xhr.setRequestHeader('x-twitter-client-language', 'ja')
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.withCredentials = true
+xhr.send(JSON.stringify(arguments[0]));
+
+xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        callback(xhr.responseText)
+    }
+}
+
+""", data)
+    except Exception as e:
+        print("already retweet")
+
+
+
+def postrank(bin, driver):
+    global post_body, start_time, end_time
+
+    res = driver.execute_async_script("""
+var bin = atob(arguments[0]);
+var buffer = new Uint8Array(bin.length);
+for (let i = 0; i < bin.length; i++) {
+    buffer[i] = bin.charCodeAt(i);
+}
+var blob = new Blob([buffer.buffer], { type: "image/png" });
+var data = new FormData()
+data.append("media", blob, "blob");
+
+var url = 'https://upload.twitter.com/i/media/upload.json?command=INIT&total_bytes=' + blob.size + '&media_type=image%2Fjpeg&media_category=tweet_image'
+
+var cookie = document.cookie.replaceAll(" ", "").split(";")
+var token = ""
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function () {
+    if (this.readyState == 4) {
+        append(JSON.parse(this.responseText)["media_id_string"]);
+    }
+}
+xhr.open('POST', url);
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
+xhr.setRequestHeader('x-csrf-token', token)
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
+xhr.withCredentials = true
+xhr.send();
+
+function append(id) {
+    let url = 'https://upload.twitter.com/i/media/upload.json?command=APPEND&media_id=' + id + '&segment_index=0'
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            final(id);
+        }
+    }
+    xhr.open('POST', url);
+    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
+    xhr.setRequestHeader('x-csrf-token', token)
+    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
+    xhr.withCredentials = true
+    xhr.send(data)
+}
+
+var callback = arguments[arguments.length - 1];
+
+function final(id) {
+    let url = 'https://upload.twitter.com/i/media/upload.json?command=FINALIZE&media_id=' + id
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            callback(id)
+        }
+    }
+    xhr.open('POST', url);
+    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
+    xhr.setRequestHeader('x-csrf-token', token)
+    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
+    xhr.withCredentials = true
+    xhr.send()
+}
+    """, bin)
+    req = copy.deepcopy(post_body)
+    req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
+    req["variables"]["tweet_text"] = "Today's top 30"
+    del req["variables"]['reply']
+    threading.Thread(target=reply, args=(req, driver,)).start()
+    print(start_time)
+    if start_time < datetime.datetime.now():
+        start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
+    print(start_time)
+    threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
+
+
+
+def browser2():
+    time.sleep(90)
+
+
+def browser(tweets, driver2):
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome(options=options)
+    driver.set_window_size(620, 1)
+    
+    for _ in range(5):
+        try:
+            driver.get(os.environ['HTML_URL'])
+            wait = WebDriverWait(driver, 10).until(EC.alert_is_present())
+            Alert(driver).accept()
+            driver.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
+            wait2 = WebDriverWait(driver, 180).until(EC.alert_is_present())
+        except Exception as e:
+            print(e)
+            print(e.args)
+        else:
+            Alert(driver).accept()
+            bin = driver.execute_script('return window.res')
+            postrank(bin, driver2)
+            wait3 = WebDriverWait(driver, 180).until(EC.alert_is_present())
+            Alert(driver).accept()
+            break
+            
+    driver.quit()
+    #threading.Thread(target=browser2).start()
+        
+
+
+def make_ranking(dict, driver):
+    time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)
+    winner = ""
+    users = []
+    dict2 = []
+    for item in dict:
+        if item["text"] == "334" and item["user"]["id_str"] not in users:
+            users.append(item["user"]["id_str"])
+            time2 = TweetIdTime(int(item["id_str"]))
+            res = (time2 - time1).total_seconds()
+            print(item["user"]["name"], '{:.3f}'.format(res))
+            if 0 <= res and res < 1:
+                result = '{:.3f}'.format(res)
+                if winner == "" or result == winner:
+                    winner = result
+                    #threading.Thread(target=retweet, args=(item["id_str"], driver,)).start()
+
+                img_src = "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
+                if item["user"]["profile_image_url_https"] != "":
+                    img_src = item["user"]["profile_image_url_https"]
+                
+                dict2.append([
+                    img_src,
+                    item["user"]["name"],
+                    str(result),
+                    item["source"],
+                    item["id_str"],
+                    "@" + item["user"]["screen_name"],
+                    item["user"]["id_str"]
+                ])
+
+    threading.Thread(target=browser, args=(str(dict2), driver,)).start()
+
+    
+
+def get_334(driver):
+    time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
+    time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
+    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 3)
+    while True:
+        if get_time < datetime.datetime.now():
+            res = driver.execute_async_script("""
+var url1 = 'https://api.twitter.com/1.1/search/'
+var url2 = '.json?count=100&result_type=recent&q=334 since:""" + time1.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + time2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -filter:replies'
+var out = [];
+var out2 = [];
+
+var cookie = document.cookie.replaceAll(" ", "").split(";")
+var token = ""
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+
+get_tweets()
+
+function setheader(xhr) {
+    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
+    xhr.setRequestHeader('x-csrf-token', token)
+    xhr.setRequestHeader('x-twitter-active-user', 'yes')
+    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
+    xhr.setRequestHeader('x-twitter-client-language', 'ja')
+    xhr.withCredentials = true
+}
+
+function get_tweets(max_id) {
+    let xhr = new XMLHttpRequest();
+    let url = max_id !== undefined ? url1 + "universal" + url2 + " max_id:" + max_id : url1 + "universal" + url2;
+    xhr.open('GET', url);
+    setheader(xhr)
+    xhr.send();
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            res = JSON.parse(xhr.responseText).modules;
+            if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
+                out.reverse();
+                console.log(out)
+                get_tweets2();
+            } else {
+                if (max_id !== undefined) res.shift();
+                for (let i = 0; i < res.length; i++) out.push(res[i].status.data);
+                get_tweets(out[out.length - 1].id_str)
+            }
+        }
+    }
+}
+
+var callback = arguments[arguments.length - 1];
+
+function get_tweets2(max_id) {
+    let xhr = new XMLHttpRequest();
+    let url = max_id !== undefined ? url1 + "tweets" + url2 + " max_id:" + max_id : url1 + "tweets" + url2;
+    xhr.open('GET', url);
+    xhr.open('GET', url);
+    setheader(xhr)
+    xhr.send();
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            res = JSON.parse(xhr.responseText);
+            if ('statuses' in res) {
+                res = res.statuses;
+                if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
+                    out2.reverse();
+                    console.log(out2)
+                    loop: for (let i = 0; i < out2.length; i++) {
+                        for (let j = 0; j < out.length; j++) if (out2[i].id_str === out[j].id_str) continue loop;
+                        if (i === 0) out.unshift(out2[i]);
+                        else {
+                            for (let k = 0; k < out.length; k++) {
+                                if (out2[i - 1].id_str === out[k].id_str) {
+                                    out.splice(k, 0, out2[i])
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    callback(out)
+                } else {
+                    if (max_id !== undefined) res.shift();
+                    for (let i = 0; i < res.length; i++) out2.push(res[i]);
+                    get_tweets2(out2[out2.length - 1].id_str)
+                }
+            } else callback(out);
+        }
+    }
+}
+            """)
+            make_ranking(res, driver)
+            break
+        time.sleep(0.01)
+
+
+
+def notice(driver):
+    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
+    while True:
+        if notice_time < datetime.datetime.now():
+            req = copy.deepcopy(post_body)
+            req["variables"]["tweet_text"] = "334観測中 (" + datetime.datetime.now().date().strftime('%Y/%m/%d') + ")"
+            del req["variables"]['reply']
+            threading.Thread(target=reply, args=(req, driver,)).start()
+            break
+        time.sleep(5)
+
+
+
+def start():
+    global start_now, start_time, end_time
+    for _ in range(3):
+        try:
+            options=Options()
+            #options.add_argument('--headless')
+            #options.add_argument('--no-sandbox')
+            #options.add_argument("--disable-extensions")
+            #options.add_argument("--disable-gpu")
+            options.add_argument('--disable-dev-shm-usage')
+            driver = webdriver.Chrome(options = options)
+            
+        except Exception as e:
+            driver.quit()
+            print(e)
+            print(e.args)
+        else:
+            break
+
+            
+    times = [
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 35, 30), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 55, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0)], #18:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1)], #22:50
+    ]
+    for i in range(len(times)):
+        if start_now < times[i][0]:
+            start_time = times[i][0]
+            end_time = times[i][1]
+            start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
+            
+            if False:#i != 0:
+                get_allresult()
+                login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
+                threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
+            else:
+                login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
+                notice(driver)
+                get_334(driver)
+                
+            break
+         
+threading.Thread(target=start).start()
+            

@@ -204,6 +204,10 @@
                     }
                     reader.readAsDataURL(xhr.response);
                 };
+                xhr.onerror = function () {
+                     tag.src = "";
+                     resolve();
+                };
                 xhr.open('GET', url);
                 xhr.responseType = 'blob';
                 xhr.send();

@@ -679,9 +679,9 @@ def start():
         try:
             options=Options()
             #options.add_argument('--headless')
-            #options.add_argument('--no-sandbox')
-            #options.add_argument("--disable-extensions")
-            #options.add_argument("--disable-gpu")
+            options.add_argument('--no-sandbox')
+            options.add_argument("--disable-extensions")
+            options.add_argument("--disable-gpu")
             options.add_argument('--disable-dev-shm-usage')
             driver = webdriver.Chrome(options = options)
             
@@ -697,7 +697,7 @@ def start():
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 35, 30), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 55, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0)], #18:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1)], #22:50
     ]

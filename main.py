@@ -696,12 +696,15 @@ def start():
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0)], #18:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1)], #22:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1)]
     ]
     for i in range(len(times)):
         if start_now < times[i][0]:
             start_time = times[i][0]
             end_time = times[i][1]
             #start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
+            #end_time = times[i][0]
+            #日付超えてからの臨時実行はこれ入れる[datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0)]
             
             if i != 0:
                 get_allresult()

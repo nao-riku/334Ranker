@@ -664,7 +664,7 @@ function get_tweets2(max_id) {
 
 def notice(driver):
     global today_result, world_rank, load_res_yet
-    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
+    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 5, 5, 0)
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}
@@ -700,7 +700,7 @@ def start():
 
             
     times = [
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 5, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50

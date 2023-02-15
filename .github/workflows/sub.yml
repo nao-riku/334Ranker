@@ -1,4 +1,4 @@
-name: 334Ranker
+name: sub
 
 on:
   repository_dispatch:

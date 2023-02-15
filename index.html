@@ -196,18 +196,18 @@
         function toBase64Url(url, tag) {
             const p = new Promise((resolve, reject) => {
                 var xhr = new XMLHttpRequest();
-                xhr.onload = function () {
-                    var reader = new FileReader();
-                    reader.onloadend = function () {
-                        tag.src = reader.result;
+                xhr.onloadend = function() {
+                    if(xhr.status == 200) {
+                        var reader = new FileReader();
+                        reader.onloadend = function () {
+                            tag.src = reader.result;
+                            resolve();
+                        }
+                        reader.readAsDataURL(xhr.response);
+                    } else {
+                        tag.src = "";
                         resolve();
-                    }
-                    reader.readAsDataURL(xhr.response);
-                };
-                xhr.onerror = function () {
-                     tag.src = "";
-                     resolve();
-                };
+                }
                 xhr.open('GET', url);
                 xhr.responseType = 'blob';
                 xhr.send();

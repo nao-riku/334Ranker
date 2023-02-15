@@ -68,7 +68,7 @@ def tweet(driver):
                             post_url = request.url
                             post_body2 = json.loads(request.body)
                             time.sleep(0.5)
-                            if "variables" in post_body2
+                            if "variables" in post_body2:
                                 post_body = post_body2
                                 print("set post_body")
                                 break

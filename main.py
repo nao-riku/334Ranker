@@ -61,14 +61,20 @@ def tweet(driver):
             time.sleep(20)
 
 
-            for request in driver.requests:
-                if request.response:
-                    if "CreateTweet" in request.url:
-                        post_url = request.url
-                        post_body = json.loads(request.body)
-                        if "variables" in post_body
-                            print("set post_body")
-                            break
+            for _ in range(5):
+                for request in driver.requests:
+                    if request.response:
+                        if "CreateTweet" in request.url:
+                            post_url = request.url
+                            post_body2 = json.loads(request.body)
+                            time.sleep(0.5)
+                            if "variables" in post_body2
+                                post_body = post_body2
+                                print("set post_body")
+                                break
+                if post_body != {}:
+                    break
+                    
 
             time.sleep(3)
 

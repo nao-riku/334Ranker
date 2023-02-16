@@ -127,6 +127,7 @@ def reply(req, driver):
     print("reply start", datetime.datetime.now())
     global post_url
     driver.execute_script("""
+var url = arguments[0];
     
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
@@ -558,7 +559,7 @@ def get_334(driver):
     get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 3)
     while True:
         if get_time < datetime.datetime.now():
-            res = driver.execute_async_script("""
+            driver.execute_script("""
 window.data = "";
 var url1 = 'https://api.twitter.com/1.1/search/';
 var url2 = '.json?count=100&result_type=recent&q=334 since:""" + time1.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + time2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -filter:replies';

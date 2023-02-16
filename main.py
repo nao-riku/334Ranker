@@ -233,7 +233,7 @@ def has_rank(key, name, item):
 def get_result(key, name):
     previous = datetime.datetime.now() - datetime.timedelta(hours=3, minutes=33)
     if today_result == {}:
-        return "ランキングは準備中です。しばらくお待ちください"
+        return "ランキングは準備中です\nしばらくお待ちください"
     if key in today_result:
         return name + "\n\n" + previous.date().strftime('%Y/%m/%d') + "の334結果\nresult: +" + today_result[key][2] + " [sec]\nrank: " + today_result[key][0] + " / " + today_result["参加者数"][0]
     else:
@@ -354,7 +354,7 @@ xhr.send();
             out = json.loads(res)["modules"]
             if out != []:
                 receive(out, driver)
-            if datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 35, 30) < until and load_res_yet:
+            if datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 36, 0) < until and load_res_yet:
                 get_allresult()
             break
         time.sleep(0.01)

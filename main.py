@@ -705,20 +705,21 @@ def start():
             start_time = times[i][0]
             end_time = times[i][1]
             
-            if i != 0 or (len(sys.argv) != 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 0, 0)):
-                get_allresult()
+            if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < times[1][0]):
                 login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
                 if len(sys.argv) != 1:
                     start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
                     end_time = times[i][0]
                 threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
-            else:
-                login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
-                if len(sys.argv) != 1:
-                    start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2) #3:00以降の臨時実行はこっち
-                threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
                 notice(driver)
                 get_334(driver)
+            else:
+                get_allresult()
+                login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
+                if len(sys.argv) != 1:
+                    start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2) #3:40以降の臨時実行はこっち
+                    end_time = times[i][0]
+                threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
                 
             break
          

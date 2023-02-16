@@ -240,7 +240,7 @@ def has_rank(key, name, item):
 
 
 def get_result(key, name):
-    previous = datetime.datetime.now() - datetime.timedelta(hours=3, minutes=20)
+    previous = datetime.datetime.now() - datetime.timedelta(hours=3, minutes=33)
     if today_result == {}:
         return "ランキングは準備中です。しばらくお待ちください"
     if key in today_result:

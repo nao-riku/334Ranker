@@ -126,36 +126,27 @@ def login_twitter(account, password, tel, driver):
 def reply(req, driver):
     print("reply start", datetime.datetime.now())
     global post_url
-    res = driver.execute_async_script("""
-var url = arguments[0];
-
-var cookie = document.cookie.replaceAll(" ", "").split(";")
-var token = ""
+    driver.execute_script("""
+    
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
 cookie.forEach(function (value) {
     let content = value.split('=');
     if (content[0] == "ct0") token = content[1];
 })
 
-var callback = arguments[arguments.length - 1];
-
 var xhr = new XMLHttpRequest();
 xhr.open('POST', url);
-xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
-xhr.setRequestHeader('x-csrf-token', token)
-xhr.setRequestHeader('x-twitter-active-user', 'yes')
-xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
-xhr.setRequestHeader('x-twitter-client-language', 'ja')
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+xhr.setRequestHeader('x-csrf-token', token);
+xhr.setRequestHeader('x-twitter-active-user', 'yes');
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+xhr.setRequestHeader('x-twitter-client-language', 'ja');
 xhr.setRequestHeader('Content-Type', 'application/json');
-xhr.withCredentials = true
+xhr.withCredentials = true;
 
 var data = JSON.stringify(arguments[1]);
 xhr.send(data);
-
-xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-        callback(xhr.responseText)
-    }
-}
 
 """, post_url, req)
 
@@ -335,10 +326,10 @@ def interval(since, until, end, index, driver):
             if until < end:
                 threading.Thread(target=interval, args=(until, until + datetime.timedelta(seconds = add), end, index + 1, driver,)).start()
             res = driver.execute_async_script("""
-var url = 'https://api.twitter.com/1.1/search/universal.json?q=@rank334 since:""" + since.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote&count=100&result_type=recent&tweet_mode=extended'
+var url = 'https://api.twitter.com/1.1/search/universal.json?q=@rank334 since:""" + since.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote&count=100&result_type=recent&tweet_mode=extended';
 
-var cookie = document.cookie.replaceAll(" ", "").split(";")
-var token = ""
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
 cookie.forEach(function (value) {
     let content = value.split('=');
     if (content[0] == "ct0") token = content[1];
@@ -348,15 +339,15 @@ var callback = arguments[arguments.length - 1];
 
 var xhr = new XMLHttpRequest();
 xhr.open('GET', url);
-xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
-xhr.setRequestHeader('x-csrf-token', token)
-xhr.setRequestHeader('x-twitter-active-user', 'yes')
-xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
-xhr.setRequestHeader('x-twitter-client-language', 'ja')
-xhr.withCredentials = true
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+xhr.setRequestHeader('x-csrf-token', token);
+xhr.setRequestHeader('x-twitter-active-user', 'yes');
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+xhr.setRequestHeader('x-twitter-client-language', 'ja');
+xhr.withCredentials = true;
 
 xhr.onload = function () {
-    callback(xhr.responseText)
+    callback(xhr.responseText);
 }
 
 xhr.send();
@@ -382,34 +373,26 @@ def retweet(id, driver):
             "queryId": "ojPdsZsimiJrUGLR1sjUtA"
         }
     
-        res = driver.execute_async_script("""
-var url = 'https://api.twitter.com/graphql/ojPdsZsimiJrUGLR1sjUtA/CreateRetweet'
+        driver.execute_script("""
+var url = 'https://api.twitter.com/graphql/ojPdsZsimiJrUGLR1sjUtA/CreateRetweet';
 
-var cookie = document.cookie.replaceAll(" ", "").split(";")
-var token = ""
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
 cookie.forEach(function (value) {
     let content = value.split('=');
     if (content[0] == "ct0") token = content[1];
 })
 
-var callback = arguments[arguments.length - 1];
-
 var xhr = new XMLHttpRequest();
 xhr.open('POST', url);
-xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
-xhr.setRequestHeader('x-csrf-token', token)
-xhr.setRequestHeader('x-twitter-active-user', 'yes')
-xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
-xhr.setRequestHeader('x-twitter-client-language', 'ja')
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+xhr.setRequestHeader('x-csrf-token', token);
+xhr.setRequestHeader('x-twitter-active-user', 'yes');
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+xhr.setRequestHeader('x-twitter-client-language', 'ja');
 xhr.setRequestHeader('Content-Type', 'application/json');
-xhr.withCredentials = true
+xhr.withCredentials = true;
 xhr.send(JSON.stringify(arguments[0]));
-
-xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-        callback(xhr.responseText)
-    }
-}
 
 """, data)
     except Exception as e:
@@ -420,20 +403,21 @@ xhr.onreadystatechange = function () {
 def postrank(bin, driver, text):
     global post_body, start_time, end_time
 
-    res = driver.execute_async_script("""
+    driver.execute_script("""
+window.data2 = "";
 var bin = atob(arguments[0]);
 var buffer = new Uint8Array(bin.length);
 for (let i = 0; i < bin.length; i++) {
     buffer[i] = bin.charCodeAt(i);
 }
 var blob = new Blob([buffer.buffer], { type: "image/png" });
-var data = new FormData()
+var data = new FormData();
 data.append("media", blob, "blob");
 
-var url = 'https://upload.twitter.com/i/media/upload.json?command=INIT&total_bytes=' + blob.size + '&media_type=image%2Fjpeg&media_category=tweet_image'
+var url = 'https://upload.twitter.com/i/media/upload.json?command=INIT&total_bytes=' + blob.size + '&media_type=image%2Fjpeg&media_category=tweet_image';
 
-var cookie = document.cookie.replaceAll(" ", "").split(";")
-var token = ""
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
 cookie.forEach(function (value) {
     let content = value.split('=');
     if (content[0] == "ct0") token = content[1];
@@ -446,14 +430,14 @@ xhr.onreadystatechange = function () {
     }
 }
 xhr.open('POST', url);
-xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
-xhr.setRequestHeader('x-csrf-token', token)
-xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
-xhr.withCredentials = true
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+xhr.setRequestHeader('x-csrf-token', token);
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+xhr.withCredentials = true;
 xhr.send();
 
 function append(id) {
-    let url = 'https://upload.twitter.com/i/media/upload.json?command=APPEND&media_id=' + id + '&segment_index=0'
+    let url = 'https://upload.twitter.com/i/media/upload.json?command=APPEND&media_id=' + id + '&segment_index=0';
 
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
@@ -462,36 +446,39 @@ function append(id) {
         }
     }
     xhr.open('POST', url);
-    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
-    xhr.setRequestHeader('x-csrf-token', token)
-    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
-    xhr.withCredentials = true
-    xhr.send(data)
+    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+    xhr.setRequestHeader('x-csrf-token', token);
+    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+    xhr.withCredentials = true;
+    xhr.send(data);
 }
 
-var callback = arguments[arguments.length - 1];
-
 function final(id) {
-    let url = 'https://upload.twitter.com/i/media/upload.json?command=FINALIZE&media_id=' + id
+    let url = 'https://upload.twitter.com/i/media/upload.json?command=FINALIZE&media_id=' + id;
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (this.readyState == 4) {
-            callback(id)
+            window.data2 = id;
         }
     }
     xhr.open('POST', url);
-    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
-    xhr.setRequestHeader('x-csrf-token', token)
-    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
-    xhr.withCredentials = true
-    xhr.send()
+    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+    xhr.setRequestHeader('x-csrf-token', token);
+    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+    xhr.withCredentials = true;
+    xhr.send();
 }
     """, bin)
-    req = copy.deepcopy(post_body)
-    req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
-    req["variables"]["tweet_text"] = text
-    del req["variables"]['reply']
-    threading.Thread(target=reply, args=(req, driver,)).start()
+    while True:
+        res = driver.execute_script("return window.data2")
+        if res != "":
+            req = copy.deepcopy(post_body)
+            req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
+            req["variables"]["tweet_text"] = text
+            del req["variables"]['reply']
+            threading.Thread(target=reply, args=(req, driver,)).start()
+            break
+        time.sleep(0.01)
 
 
 
@@ -572,34 +559,35 @@ def get_334(driver):
     while True:
         if get_time < datetime.datetime.now():
             res = driver.execute_async_script("""
-var url1 = 'https://api.twitter.com/1.1/search/'
-var url2 = '.json?count=100&result_type=recent&q=334 since:""" + time1.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + time2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -filter:replies'
+window.data = "";
+var url1 = 'https://api.twitter.com/1.1/search/';
+var url2 = '.json?count=100&result_type=recent&q=334 since:""" + time1.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + time2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -filter:replies';
 var out = [];
 var out2 = [];
 
-var cookie = document.cookie.replaceAll(" ", "").split(";")
-var token = ""
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
 cookie.forEach(function (value) {
     let content = value.split('=');
     if (content[0] == "ct0") token = content[1];
 })
 
-get_tweets()
+get_tweets();
 
 function setheader(xhr) {
-    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA')
-    xhr.setRequestHeader('x-csrf-token', token)
-    xhr.setRequestHeader('x-twitter-active-user', 'yes')
-    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session')
-    xhr.setRequestHeader('x-twitter-client-language', 'ja')
-    xhr.withCredentials = true
+    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+    xhr.setRequestHeader('x-csrf-token', token);
+    xhr.setRequestHeader('x-twitter-active-user', 'yes');
+    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+    xhr.setRequestHeader('x-twitter-client-language', 'ja');
+    xhr.withCredentials = true;
 }
 
 function get_tweets(max_id) {
     let xhr = new XMLHttpRequest();
     let url = max_id !== undefined ? url1 + "universal" + url2 + " max_id:" + max_id : url1 + "universal" + url2;
     xhr.open('GET', url);
-    setheader(xhr)
+    setheader(xhr);
     xhr.send();
 
     xhr.onreadystatechange = function () {
@@ -607,25 +595,21 @@ function get_tweets(max_id) {
             res = JSON.parse(xhr.responseText).modules;
             if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
                 out.reverse();
-                console.log(out)
                 get_tweets2();
             } else {
                 if (max_id !== undefined) res.shift();
                 for (let i = 0; i < res.length; i++) out.push(res[i].status.data);
-                get_tweets(out[out.length - 1].id_str)
+                get_tweets(out[out.length - 1].id_str);
             }
         }
     }
 }
 
-var callback = arguments[arguments.length - 1];
-
 function get_tweets2(max_id) {
     let xhr = new XMLHttpRequest();
     let url = max_id !== undefined ? url1 + "tweets" + url2 + " max_id:" + max_id : url1 + "tweets" + url2;
     xhr.open('GET', url);
-    xhr.open('GET', url);
-    setheader(xhr)
+    setheader(xhr);
     xhr.send();
 
     xhr.onreadystatechange = function () {
@@ -635,31 +619,35 @@ function get_tweets2(max_id) {
                 res = res.statuses;
                 if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
                     out2.reverse();
-                    console.log(out2)
                     loop: for (let i = 0; i < out2.length; i++) {
                         for (let j = 0; j < out.length; j++) if (out2[i].id_str === out[j].id_str) continue loop;
                         if (i === 0) out.unshift(out2[i]);
                         else {
                             for (let k = 0; k < out.length; k++) {
                                 if (out2[i - 1].id_str === out[k].id_str) {
-                                    out.splice(k, 0, out2[i])
+                                    out.splice(k, 0, out2[i]);
                                     break;
                                 }
                             }
                         }
                     }
-                    callback(out)
+                    window.data = out;
                 } else {
                     if (max_id !== undefined) res.shift();
                     for (let i = 0; i < res.length; i++) out2.push(res[i]);
-                    get_tweets2(out2[out2.length - 1].id_str)
+                    get_tweets2(out2[out2.length - 1].id_str);
                 }
-            } else callback(out);
+            } else window.data = out;
         }
     }
 }
             """)
-            make_ranking(res, driver)
+            while True:
+                res = driver.execute_script("return window.data")
+                if res != "":
+                    make_ranking(res, driver)
+                    break
+                time.sleep(0.01)
             break
         time.sleep(0.01)
 
@@ -722,13 +710,11 @@ def start():
                 if len(sys.argv) != 1:
                     start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
                     end_time = times[i][0]
-                print(start_time)
                 threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
             else:
                 login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
                 if len(sys.argv) != 1:
                     start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2) #3:00以降の臨時実行はこっち
-                print(start_time)
                 threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
                 notice(driver)
                 get_334(driver)

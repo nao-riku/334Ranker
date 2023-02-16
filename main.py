@@ -692,7 +692,7 @@ def start():
 
             
     times = [
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 6, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 5, 30, 0)], #2:50
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50

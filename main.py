@@ -705,7 +705,7 @@ def start():
             start_time = times[i][0]
             end_time = times[i][1]
             
-            if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < times[1][0]):
+            if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1):
                 login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
                 if len(sys.argv) != 1:
                     start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)

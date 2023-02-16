@@ -49,7 +49,7 @@ def tweet(driver):
     global post_body, post_url
     for _ in range(3):
         try:
-            driver.get('https://twitter.com/Rank334_2/status/1624490398730321920')
+            driver.get('https://twitter.com/Rank334/status/1626108351364100098')
             element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
             time.sleep(1)
 
@@ -413,12 +413,11 @@ xhr.onreadystatechange = function () {
 
 """, data)
     except Exception as e:
-        print("already retweet")
+        print("error retweet")
 
 
 
 def postrank(bin, driver, text):
-    print("postrank start", datetime.datetime.now())
     global post_body, start_time, end_time
 
     res = driver.execute_async_script("""
@@ -488,7 +487,6 @@ function final(id) {
     xhr.send()
 }
     """, bin)
-    print("res get", datetime.datetime.now())
     req = copy.deepcopy(post_body)
     req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
     req["variables"]["tweet_text"] = text
@@ -502,7 +500,6 @@ def browser2(driver):
 
 
 def browser(tweets, driver2):
-    print("browser start", datetime.datetime.now())
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
@@ -517,7 +514,6 @@ def browser(tweets, driver2):
             driver.get(os.environ['HTML_URL'])
             wait = WebDriverWait(driver, 10).until(EC.alert_is_present())
             Alert(driver).accept()
-            print("html get", datetime.datetime.now())
             driver.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
             wait2 = WebDriverWait(driver, 180).until(EC.alert_is_present())
         except Exception as e:
@@ -525,9 +521,7 @@ def browser(tweets, driver2):
             print(e.args)
         else:
             Alert(driver).accept()
-            print("alert get", datetime.datetime.now())
             bin = driver.execute_script('return window.res')
-            print("bin get", datetime.datetime.now())
             postrank(bin, driver2, "Today's top 30")
             wait3 = WebDriverWait(driver, 180).until(EC.alert_is_present())
             Alert(driver).accept()
@@ -538,7 +532,6 @@ def browser(tweets, driver2):
 
 
 def make_ranking(dict, driver):
-    print("make_ranking start", datetime.datetime.now())
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)
     winner = ""
     users = []
@@ -573,13 +566,11 @@ def make_ranking(dict, driver):
     
 
 def get_334(driver):
-    print("get_334 start", datetime.datetime.now())
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
     time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
     get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 3)
     while True:
         if get_time < datetime.datetime.now():
-            print("get_334 res start", datetime.datetime.now())
             res = driver.execute_async_script("""
 var url1 = 'https://api.twitter.com/1.1/search/'
 var url2 = '.json?count=100&result_type=recent&q=334 since:""" + time1.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + time2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -filter:replies'
@@ -668,7 +659,6 @@ function get_tweets2(max_id) {
     }
 }
             """)
-            print("get_334 res end", datetime.datetime.now())
             make_ranking(res, driver)
             break
         time.sleep(0.01)
@@ -677,7 +667,7 @@ function get_tweets2(max_id) {
 
 def notice(driver):
     global today_result, world_rank, load_res_yet
-    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 58, 0)
+    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}
@@ -726,7 +716,7 @@ def start():
             start_time = times[i][0]
             end_time = times[i][1]
             
-            if False:#i != 0 or (len(sys.argv) != 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 0, 0)):
+            if i != 0 or (len(sys.argv) != 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 0, 0)):
                 get_allresult()
                 login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
                 if len(sys.argv) != 1:

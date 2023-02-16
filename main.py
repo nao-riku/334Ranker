@@ -677,7 +677,7 @@ function get_tweets2(max_id) {
 
 def notice(driver):
     global today_result, world_rank, load_res_yet
-    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
+    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 58, 0)
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}
@@ -726,7 +726,7 @@ def start():
             start_time = times[i][0]
             end_time = times[i][1]
             
-            if i != 0 or (len(sys.argv) != 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 0, 0)):
+            if False:#i != 0 or (len(sys.argv) != 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 0, 0)):
                 get_allresult()
                 login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
                 if len(sys.argv) != 1:

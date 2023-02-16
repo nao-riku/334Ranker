@@ -125,7 +125,6 @@ def login_twitter(account, password, tel, driver):
 
 def reply(req, driver):
     print("reply start", datetime.datetime.now())
-    global post_url
     driver.execute_script("""
 var url = arguments[0];
     
@@ -262,7 +261,6 @@ def TimeToStr(d):
 
 
 def receive(dict, driver):
-    global post_body, post_url
     ranker_id = "1558892196069134337"
 
     for item in dict:
@@ -402,7 +400,6 @@ xhr.send(JSON.stringify(arguments[0]));
 
 
 def postrank(bin, driver, text):
-    global post_body, start_time, end_time
 
     driver.execute_script("""
 window.data2 = "";

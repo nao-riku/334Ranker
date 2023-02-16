@@ -471,6 +471,7 @@ function final(id) {
 }
     """, bin)
     while True:
+        time.sleep(0.01)
         res = driver.execute_script("return window.data2")
         if res != "":
             req = copy.deepcopy(post_body)
@@ -479,7 +480,6 @@ function final(id) {
             del req["variables"]['reply']
             threading.Thread(target=reply, args=(req, driver,)).start()
             break
-        time.sleep(0.01)
 
 
 
@@ -644,11 +644,11 @@ function get_tweets2(max_id) {
 }
             """)
             while True:
+                time.sleep(0.01)
                 res = driver.execute_script("return window.data")
                 if res != "":
                     make_ranking(res, driver)
                     break
-                time.sleep(0.01)
             break
         time.sleep(0.01)
 

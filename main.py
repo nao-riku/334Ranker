@@ -705,21 +705,16 @@ def start():
             start_time = times[i][0]
             end_time = times[i][1]
             
+            get_allresult()
+            login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
+            if len(sys.argv) != 1:
+                start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
+                end_time = times[i][0]
+            threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
+            
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1):
-                login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
-                if len(sys.argv) != 1:
-                    start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
-                    end_time = times[i][0]
-                threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
                 notice(driver)
                 get_334(driver)
-            else:
-                get_allresult()
-                login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
-                if len(sys.argv) != 1:
-                    start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2) #3:40以降の臨時実行はこっち
-                    end_time = times[i][0]
-                threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
                 
             break
          

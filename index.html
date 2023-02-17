@@ -216,8 +216,7 @@
         }
 
         function main(list) {
-            console.log(list)
-
+            
             if (list.length === 0) {
                 alert("参加者が0人でした");
                 return;
@@ -351,15 +350,16 @@
                 html2canvas(document.querySelector("#table"), { scale: 3 }).then(canvas => {
                     let url = canvas.toDataURL("image/png");
                     window.res = url.split(",")[1];
+                    console.log(list)
                     alert("next")
-                    senddata(list)
+                    senddata()
                 });
             }
 
             const promise = Promise.all(queue);
             promise.then((e) => make_img());
 
-            function senddata(list) {
+            function senddata() {
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', decodeURIComponent(window.location.href.replace(window.location.origin,"").split("?")[1]));
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');

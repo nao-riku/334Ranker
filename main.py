@@ -546,6 +546,7 @@ def make_ranking(dict, driver):
                     item["user"]["id_str"]
                 ])
 
+    print(str(dict2))
     threading.Thread(target=browser, args=(str(dict2), driver,)).start()
 
     

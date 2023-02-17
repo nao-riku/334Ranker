@@ -221,6 +221,15 @@
                 alert("参加者が0人でした");
                 return;
             }
+            
+            for (var i = 0; i < list.length; i++) {
+                let dom = document.createElement('div');
+                dom.innerHTML = list[i][3];
+                let source_str = dom.innerText;
+                if (source_str === "") source_str = undefined;
+                list[i][3] = source_str;
+            }
+            console.log(list)
 
             document.getElementById("title").innerText = "Today's top 30 (" + getNowDateWithString() + ")";
 
@@ -334,13 +343,8 @@
 
                 let source_td = document.createElement('td');
                 source_td.setAttribute("class", row_style + " source");
-                let dom = document.createElement('div');
-                dom.innerHTML = list[i][3];
-                let source_str = dom.innerText;
-                if (source_str === "") source_str = undefined;
-                source_td.innerText = source_str;
-                list[i][3] = source_str;
-                if (!client.includes(source_str)) source_td.style = "color: #a9a9a9";
+                source_td.innerText = list[i][3];
+                if (!client.includes(list[i][3])) source_td.style = "color: #a9a9a9";
                 tr.appendChild(source_td);
 
                 tbody.appendChild(tr);
@@ -350,7 +354,6 @@
                 html2canvas(document.querySelector("#table"), { scale: 3 }).then(canvas => {
                     let url = canvas.toDataURL("image/png");
                     window.res = url.split(",")[1];
-                    console.log(list)
                     alert("next")
                     senddata()
                 });

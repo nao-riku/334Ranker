@@ -337,9 +337,10 @@
                 source_td.setAttribute("class", row_style + " source");
                 let dom = document.createElement('div');
                 dom.innerHTML = list[i][3];
-                source_str = dom.innerText;
+                let source_str = dom.innerText;
                 if (source_str === "") source_str = undefined;
                 source_td.innerText = source_str;
+                list[i][3] = source_str;
                 if (!client.includes(source_str)) source_td.style = "color: #a9a9a9";
                 tr.appendChild(source_td);
 

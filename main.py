@@ -709,7 +709,7 @@ def start():
                 end_time = times[i][0]
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
             
-            if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1):
+            if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 10):
                 notice(driver)
                 get_334(driver)
                 

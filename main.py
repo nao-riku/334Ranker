@@ -15,12 +15,14 @@ import copy
 import requests
 import os
 import sys
+import traceback
 
 post_url = ""
 post_body = {}
 today_result = {}
 world_rank = {}
 load_res_yet = True
+timeline_body = {}
 
 start_now = datetime.datetime.now()
 start_time = ""
@@ -37,8 +39,7 @@ def get_allresult():
         today_result = r_json["result"]
         world_rank = r_json["rank"]
     except Exception as e:
-        print(e)
-        print(e.args)
+        traceback.print_exc()
     if today_result == {} or world_rank == {}:
         load_res_yet = True
     else:
@@ -80,14 +81,14 @@ def tweet(driver):
             time.sleep(3)
 
         except Exception as e:
-            print(e)
-            print(e.args)
+            traceback.print_exc()
         else:
             break
 	
     
 
 def login_twitter(account, password, tel, driver):
+    global timeline_body
     for _ in range(3):
         try:
             driver.get('https://twitter.com/i/flow/login')
@@ -114,11 +115,37 @@ def login_twitter(account, password, tel, driver):
                 element_tel[0].send_keys(Keys.ENTER)
                 time.sleep(20)
 
+            driver.get('https://twitter.com/home')
+            time.sleep(20)
+            
+            for _ in range(5):
+                for request in driver.requests:
+                    if request.response:
+                        if "Timeline" in request.url and "graphql" in request.url:
+                            if request.body != b'':
+                                timeline_body2 = json.loads(request.body)
+                                time.sleep(0.5)
+                                if "variables" in timeline_body2:
+                                    timeline_body = timeline_body2
+                                    print("set timeline_body")
+                                    break
+                            else:
+                                timeline_body2 = request.params
+                                time.sleep(0.5)
+                                if "variables" in timeline_body2:
+                                    timeline_body = timeline_body2
+                                    timeline_body["variables"] = json.loads(timeline_body["variables"])
+                                    timeline_body["features"] = json.loads(timeline_body["features"])
+                                    print("set timeline_body")
+                                    break
+                if timeline_body != {}:
+                    break
+                time.sleep(0.5)
+                
             tweet(driver)
         
         except Exception as e:
-            print(e)
-            print(e.args)
+            traceback.print_exc()
         else:
             break
 
@@ -503,8 +530,7 @@ def browser(tweets, driver2):
             driver.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
             wait2 = WebDriverWait(driver, 180).until(EC.alert_is_present())
         except Exception as e:
-            print(e)
-            print(e.args)
+            traceback.print_exc()
         else:
             Alert(driver).accept()
             bin = driver.execute_script('return window.res')
@@ -564,16 +590,24 @@ var url1 = 'https://api.twitter.com/1.1/search/';
 var url2 = '.json?count=100&result_type=recent&q=334 since:""" + time1.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + time2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -filter:replies';
 var out = [];
 var out2 = [];
-
+var out3 = [];
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
 cookie.forEach(function (value) {
     let content = value.split('=');
     if (content[0] == "ct0") token = content[1];
 })
-
+let time1 = new Date()
+time1.setHours(3);
+time1.setMinutes(34);
+time1.setSeconds(0);
+time1.setMilliseconds(0);
+var data = arguments[0];
+console.log(data)
+data.variables["cursor"] = "";
+data.variables.seenTweetIds = [];
+data.queryId = "pI4BELZIWSJdQdWRrkKs6g";
 get_tweets();
-
 function setheader(xhr) {
     xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
     xhr.setRequestHeader('x-csrf-token', token);
@@ -582,66 +616,117 @@ function setheader(xhr) {
     xhr.setRequestHeader('x-twitter-client-language', 'ja');
     xhr.withCredentials = true;
 }
-
 function get_tweets(max_id) {
     let xhr = new XMLHttpRequest();
     let url = max_id !== undefined ? url1 + "universal" + url2 + " max_id:" + max_id : url1 + "universal" + url2;
     xhr.open('GET', url);
     setheader(xhr);
     xhr.send();
-
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             res = JSON.parse(xhr.responseText).modules;
-            if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
-                out.reverse();
-                get_tweets2();
-            } else {
+            if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) get_tweets2();
+            else {
                 if (max_id !== undefined) res.shift();
-                for (let i = 0; i < res.length; i++) out.push(res[i].status.data);
+                for (let i = 0; i < res.length; i++) {
+                    let tweet = res[i].status.data;
+                    tweet["index"] = parseInt(BigInt(tweet.id_str).toString(2).slice(0, -22), 2) + 1288834974657;
+                    out.push(tweet);
+                }
                 get_tweets(out[out.length - 1].id_str);
             }
         }
     }
 }
-
 function get_tweets2(max_id) {
     let xhr = new XMLHttpRequest();
     let url = max_id !== undefined ? url1 + "tweets" + url2 + " max_id:" + max_id : url1 + "tweets" + url2;
     xhr.open('GET', url);
     setheader(xhr);
     xhr.send();
-
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             res = JSON.parse(xhr.responseText);
             if ('statuses' in res) {
                 res = res.statuses;
                 if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
-                    out2.reverse();
-                    loop: for (let i = 0; i < out2.length; i++) {
-                        for (let j = 0; j < out.length; j++) if (out2[i].id_str === out[j].id_str) continue loop;
-                        if (i === 0) out.unshift(out2[i]);
-                        else {
-                            for (let k = 0; k < out.length; k++) {
-                                if (out2[i - 1].id_str === out[k].id_str) {
-                                    out.splice(k, 0, out2[i]);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    window.data = out;
+                    out = out.concat(out2)
+                    get_tweets3(data);
                 } else {
                     if (max_id !== undefined) res.shift();
-                    for (let i = 0; i < res.length; i++) out2.push(res[i]);
+                    for (let i = 0; i < res.length; i++) {
+                        let tweet = res[i];
+                        tweet["index"] = parseInt(BigInt(tweet.id_str).toString(2).slice(0, -22), 2) + 1288834974657;
+                        out2.push(res[i]);
+                    }
                     get_tweets2(out2[out2.length - 1].id_str);
                 }
-            } else window.data = out;
+            } else get_tweets3(data);
         }
     }
 }
-            """)
+function get_tweets3(d) {
+    try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.twitter.com/graphql/pI4BELZIWSJdQdWRrkKs6g/HomeLatestTimeline');
+        setheader(xhr);
+        xhr.setRequestHeader('content-type', 'application/json');
+        xhr.onload = function () {
+            let entries = JSON.parse(xhr.responseText).data.home.home_timeline_urt.instructions[0].entries;
+            for (let i = 0; i < entries.length; i++) {
+                if (entries[i].entryId.indexOf("promoted") == -1 && entries[i].entryId.indexOf("cursor") == -1) {
+                    try {
+                        if (~entries[i].entryId.indexOf("home")) var res = entries[i].content.items[0].item.itemContent.tweet_results.result;
+                        else var res = entries[i].content.itemContent.tweet_results.result;
+                        if ("tweet" in res) res = res.tweet;
+                        let legacy = res.legacy;
+                        if (new Date(legacy.created_at) < time1) {
+                            if (~entries[i].entryId.indexOf("home")) continue;
+                            else {
+                                out = out.concat(out3);
+                                final();
+                                break;
+                            }
+                        }
+                        legacy["text"] = legacy.full_text;
+                        if (legacy.text != "334") continue;
+                        legacy["source"] = res.source;
+                        legacy["index"] = parseInt(BigInt(legacy.id_str).toString(2).slice(0, -22), 2) + 1288834974657;
+                        legacy["user"] = res.core.user_results.result.legacy;
+                        legacy.user["id_str"] = legacy.user_id_str;
+                        out3.push(legacy);
+                        continue;
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
+                if (~entries[i].entryId.indexOf("bottom")) {
+                    let data2 = Object.assign({}, data);
+                    data2.variables.cursor = entries[i].content.value;
+                    get_tweets3(data2);
+                    break;
+                }
+            }
+        }
+        xhr.send(JSON.stringify(d));
+    } catch (e) {
+        console.log(e);
+        final();
+    }
+}
+function final() {
+    let out4 = []
+    let ids = [];
+    out.sort((a, b) => a.index - b.index);
+    for (let i = 0; i < out.length; i++) {
+        if (!ids.includes(out[i].id_str)) {
+            out4.push(out[i]);
+            ids.push(out[i].id_str);
+        }
+    }
+    window.data = out4;
+}
+            """, timeline_body)
             while True:
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")
@@ -684,8 +769,7 @@ def start():
             driver = webdriver.Chrome(options = options)
             
         except Exception as e:
-            print(e)
-            print(e.args)
+            traceback.print_exc()
         else:
             break
 
@@ -711,7 +795,7 @@ def start():
                 end_time = times[i][0]
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
             
-            if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
+            if True:#(len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
                 notice(driver)
                 get_334(driver)
                 

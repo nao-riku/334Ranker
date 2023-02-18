@@ -74,6 +74,7 @@ def tweet(driver):
                                 break
                 if post_body != {}:
                     break
+                time.sleep(0.5)
                     
 
             time.sleep(3)

@@ -603,7 +603,6 @@ time1.setMinutes(34);
 time1.setSeconds(0);
 time1.setMilliseconds(0);
 var data = arguments[0];
-console.log(data)
 data.variables["cursor"] = "";
 data.variables.seenTweetIds = [];
 data.queryId = "pI4BELZIWSJdQdWRrkKs6g";

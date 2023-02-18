@@ -50,7 +50,7 @@ def tweet(driver):
     global post_body, post_url
     for _ in range(3):
         try:
-            driver.get('https://twitter.com/Rank334/status/1626108351364100098')
+            driver.get('https://twitter.com/Rank334_2/status/1625587533739606016')#Rank334/status/1626108351364100098')
             element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
             time.sleep(1)
 

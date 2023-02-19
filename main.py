@@ -360,8 +360,9 @@ def interval(since, until, end, index, driver):
                 add = 1
             if until < end:
                 threading.Thread(target=interval, args=(until, until + datetime.timedelta(seconds = add), end, index + 1, driver,)).start()
+            since2 = since - datetime.timedelta(seconds = 1)
             res = driver.execute_async_script("""
-var url = 'https://api.twitter.com/1.1/search/universal.json?q=@rank334 since:""" + since.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote&count=100&result_type=recent&tweet_mode=extended';
+var url = 'https://api.twitter.com/1.1/search/universal.json?q=@rank334 since:""" + since2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote&count=100&result_type=recent&tweet_mode=extended';
 
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";

@@ -219,11 +219,6 @@
 
         function main(list) {
             
-            if (list.length === 0) {
-                alert("参加者が0人でした");
-                return;
-            }
-            
             for (var i = 0; i < list.length; i++) {
                 let dom = document.createElement('div');
                 dom.innerHTML = list[i][3];

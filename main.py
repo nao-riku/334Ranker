@@ -546,8 +546,70 @@ function final(id) {
 
 
 
-def browser2(driver):
-    driver.quit()
+def browser2(driver, driver2):
+    for _ in range(5):
+        try:
+            driver.get(os.environ['HTML_URL2'])
+            wait = WebDriverWait(driver, 60).until(EC.alert_is_present())
+            Alert(driver).accept()
+            data = driver.execute_script('return window.data')
+            driver2.execute_script("""
+window.data = "";
+var data = arguments[0];
+var data2 = arguments[1];
+var callback = arguments[arguments.length - 1];
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+var queue = [];
+for (let i = 0; i < data2.length; i++) {
+    queue.push(getdata(i));
+}
+function getdata(i) {
+    const p = new Promise((resolve, reject) => {
+        data.variables.userId = data2[i][1];
+        let param = "?" + Object.entries(data).map((e) => { return `${e[0]}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&");
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "https://api.twitter.com/graphql/gUIQEk2xDGzQTX8Ii0Yesw/UserByRestId" + param);
+        xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+        xhr.setRequestHeader('x-csrf-token', token);
+        xhr.setRequestHeader('x-twitter-active-user', 'yes');
+        xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+        xhr.setRequestHeader('x-twitter-client-language', 'ja');
+        xhr.withCredentials = true;
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                let res = JSON.parse(xhr.responseText);
+                data2[i].push(res.data.user.result.legacy.name);
+                data2[i].push(res.data.user.result.legacy.screen_name);
+                data2[i].push(res.data.user.result.legacy.profile_image_url_https);
+                resolve();
+            }
+        }
+        xhr.send();
+    });
+    return p;
+}
+const promise = Promise.all(queue);
+promise.then((e) => window.data = data2);
+            """, getuser_body, data)
+            while True:
+                time.sleep(0.01)
+                res = driver2.execute_script("return window.data")
+                if res != "":
+                    break
+            driver.execute_script('document.getElementById("input").value = arguments[0]; start();', res)
+            wait2 = WebDriverWait(driver, 180).until(EC.alert_is_present())
+        except Exception as e:
+            traceback.print_exc()
+        else:
+            Alert(driver).accept()
+            bin = driver.execute_script('return window.res')
+            postrank(bin, driver2, "This month's top 30")
+            break
 
 
 def browser(tweets, driver2):
@@ -577,7 +639,7 @@ def browser(tweets, driver2):
             Alert(driver).accept()
             break
             
-    browser2(driver)
+    browser2(driver, driver2)
         
 
 

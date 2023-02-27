@@ -98,7 +98,7 @@ def tweet(driver):
     
 
 def login_twitter(account, password, tel, driver):
-    global timeline_body
+    global timeline_body, getuser_body
     for _ in range(3):
         try:
             driver.get('https://twitter.com/i/flow/login')

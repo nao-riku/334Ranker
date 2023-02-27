@@ -23,6 +23,7 @@ today_result = {}
 world_rank = {}
 load_res_yet = True
 timeline_body = {}
+getuser_body = {}
 
 start_now = datetime.datetime.now()
 start_time = ""
@@ -149,8 +150,36 @@ def login_twitter(account, password, tel, driver):
                 if timeline_body != {}:
                     break
                 time.sleep(0.5)
+		
+		    driver.get('https://twitter.com/intent/user?user_id=1')
+            time.sleep(20)
+            
+            for _ in range(5):
+                for request in driver.requests:
+                    if request.response:
+                        if "UserByRestId" in request.url and "graphql" in request.url:
+                            if request.body != b'':
+                                getuser_body2 = json.loads(request.body)
+                                time.sleep(0.5)
+                                if "variables" in getuser_body2:
+                                    getuser_body = getuser_body2
+                                    print("set getuser_body")
+                                    break
+                            else:
+                                getuser_body2 = request.params
+                                time.sleep(0.5)
+                                if "variables" in getuser_body2:
+                                    getuser_body = getuser_body2
+                                    getuser_body["variables"] = json.loads(getuser_body["variables"])
+                                    getuser_body["features"] = json.loads(getuser_body["features"])
+                                    print("set getuser_body")
+                                    break
+                if getuser_body != {}:
+                    break
+                time.sleep(0.5)
+            print(getuser_body)
                 
-            tweet(driver)
+            #tweet(driver)
         
         except Exception as e:
             traceback.print_exc()
@@ -801,7 +830,7 @@ def start():
             if len(sys.argv) != 1:
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
                 end_time = times[i][0]
-            threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
+            #threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
                 notice(driver)

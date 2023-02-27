@@ -583,9 +583,15 @@ function getdata(i) {
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 let res = JSON.parse(xhr.responseText);
-                data2[i].push(res.data.user.result.legacy.name);
-                data2[i].push(res.data.user.result.legacy.screen_name);
-                data2[i].push(res.data.user.result.legacy.profile_image_url_https);
+                try {
+                    data2[i].push(res.data.user.result.legacy.name);
+                    data2[i].push(res.data.user.result.legacy.screen_name);
+                    data2[i].push(res.data.user.result.legacy.profile_image_url_https);
+                } catch {
+                    data2[i].push("unknown");
+                    data2[i].push("unknown");
+                    data2[i].push("");
+                }
                 resolve();
             }
         }

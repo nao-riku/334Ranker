@@ -316,7 +316,7 @@
                 img_div.setAttribute("style", "width:29px;height:29px;");
                 let img_tag = document.createElement('img');
                 img_tag.setAttribute("style", "width:inherit;height:inherit;object-fit:scale-down;object-position:left bottom;");
-                if (list[i][8] !== "") toBase64Url(list[i][8], img_tag);
+                if (list[i][8] !== "") queue.push(toBase64Url(list[i][8], img_tag));
                 img_div.appendChild(img_tag);
                 img_td.appendChild(img_div);
                 tr.appendChild(img_td);

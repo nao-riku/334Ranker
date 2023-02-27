@@ -21,7 +21,7 @@ jobs:
         continue-on-error: true
         run: |
           sudo languagesetup -langspec ja
-          sudo systemsetup -settimezone Asia/Shanghai
+          sudo systemsetup -settimezone Asia/Tokyo
           pip install chromedriver-binary-auto
           pip install selenium-wire
           pip install selenium

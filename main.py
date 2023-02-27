@@ -601,7 +601,7 @@ function getdata(i) {
 }
 const promise = Promise.all(queue);
 promise.then((e) => window.data = data2);
-            """, getuser_body, data)
+            """, getuser_body, str(data))
             while True:
                 time.sleep(0.01)
                 res = driver2.execute_script("return window.data")

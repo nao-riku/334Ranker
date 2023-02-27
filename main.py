@@ -179,7 +179,7 @@ def login_twitter(account, password, tel, driver):
                 time.sleep(0.5)
             print(getuser_body)
                 
-            #tweet(driver)
+            tweet(driver)
         
         except Exception as e:
             traceback.print_exc()
@@ -892,7 +892,7 @@ def start():
             if len(sys.argv) != 1:
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
                 end_time = times[i][0]
-            #threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
+            threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
                 notice(driver)

@@ -151,7 +151,7 @@ def login_twitter(account, password, tel, driver):
                     break
                 time.sleep(0.5)
 		
-		    driver.get('https://twitter.com/intent/user?user_id=1')
+            driver.get('https://twitter.com/intent/user?user_id=1')
             time.sleep(20)
             
             for _ in range(5):

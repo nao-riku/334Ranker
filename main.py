@@ -645,7 +645,9 @@ def browser(tweets, driver2):
             Alert(driver).accept()
             break
             
-    browser2(driver, driver2)
+    dt = datetime.datetime.now()
+    if dt.replace(day=calendar.monthrange(dt.year, dt.month)[1]).day == dt.day:
+        browser2(driver, driver2)
         
 
 

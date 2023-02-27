@@ -178,7 +178,6 @@ def login_twitter(account, password, tel, driver):
                 if getuser_body != {}:
                     break
                 time.sleep(0.5)
-            print(getuser_body)
                 
             tweet(driver)
         

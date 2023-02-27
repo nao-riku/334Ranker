@@ -330,9 +330,9 @@
                 tr.appendChild(name_td);
 
                 let time_td = document.createElement('td');
-                if (list[i][2] === 0) list[i][2] = list[i][3];
                 if (list[i][2] >= 9500) time_td.setAttribute("class", row_style + " s7 time");
                 else time_td.setAttribute("class", row_style + " s6 time");
+                if (list[i][2] === 0) list[i][2] = list[i][3];
                 time_td.innerText = String(list[i][2].toFixed(2));
                 tr.appendChild(time_td);
 

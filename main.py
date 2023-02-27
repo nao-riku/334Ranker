@@ -558,7 +558,6 @@ def browser2(driver, driver2):
 window.data = "";
 var data = arguments[0];
 var data2 = arguments[1];
-var callback = arguments[arguments.length - 1];
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
 cookie.forEach(function (value) {

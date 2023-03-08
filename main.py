@@ -348,7 +348,7 @@ def receive(dict, driver):
                         user_name = "@" + item["status"]["data"]["user"]["screen_name"]
                     rep_text = has_rank(user_id, user_name, item)
                     if rep_text == False:
-                        rep_text = get_result(user_id, user_name)
+                        pass
                 else:
                     user_id = item["status"]["data"]["in_reply_to_user_id_str"]
                     user_name = ""

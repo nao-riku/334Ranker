@@ -288,7 +288,7 @@ def has_rank(key, name, item):
     mentions = item["status"]["data"]["entities"]["user_mentions"]
     for user in mentions:
         text = text.replace("@" + user["screen_name"].lower(), "")
-    if "ランク" in text or "ﾗﾝｸ" in text or "らんく" in text or "rank" in text:
+    if "ランク" in text or "ﾗﾝｸ" in text or "らんく" in text or "rank" in text or "ランキング" in text or "ﾗﾝｷﾝｸﾞ" in text:
         return get_rank(key, name)
     else:
         return False

@@ -92,6 +92,7 @@ def tweet(driver):
 
         except Exception as e:
             traceback.print_exc()
+            time.sleep(2)
         else:
             break
 	
@@ -99,7 +100,7 @@ def tweet(driver):
 
 def login_twitter(account, password, tel, driver):
     global timeline_body, getuser_body
-    for _ in range(3):
+    for _ in range(5):
         try:
             driver.get('https://twitter.com/i/flow/login')
             driver.maximize_window()
@@ -183,6 +184,7 @@ def login_twitter(account, password, tel, driver):
         
         except Exception as e:
             traceback.print_exc()
+            time.sleep(2)
         else:
             break
 
@@ -610,6 +612,7 @@ promise.then((e) => window.data = data2);
             wait2 = WebDriverWait(driver, 180).until(EC.alert_is_present())
         except Exception as e:
             traceback.print_exc()
+            time.sleep(2)
         else:
             Alert(driver).accept()
             bin = driver.execute_script('return window.res')
@@ -636,6 +639,7 @@ def browser(tweets, driver2):
             wait2 = WebDriverWait(driver, 180).until(EC.alert_is_present())
         except Exception as e:
             traceback.print_exc()
+            time.sleep(1)
         else:
             Alert(driver).accept()
             bin = driver.execute_script('return window.res')
@@ -876,6 +880,7 @@ def start():
             
         except Exception as e:
             traceback.print_exc()
+            time.sleep(2)
         else:
             break
 

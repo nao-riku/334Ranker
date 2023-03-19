@@ -24,6 +24,7 @@ today_result = {}
 world_rank = {}
 load_res_yet = True
 timeline_body = {}
+getuser_url = ""
 getuser_body = {}
 
 start_now = datetime.datetime.now()
@@ -99,7 +100,7 @@ def tweet(driver):
     
 
 def login_twitter(account, password, tel, driver):
-    global timeline_body, getuser_body
+    global timeline_body, getuser_body, getuser_url
     for _ in range(5):
         try:
             driver.get('https://twitter.com/i/flow/login')
@@ -160,6 +161,7 @@ def login_twitter(account, password, tel, driver):
                 for request in driver.requests:
                     if request.response:
                         if "UserByRestId" in request.url and "graphql" in request.url:
+                            getuser_url = request.url
                             if request.body != b'':
                                 getuser_body2 = json.loads(request.body)
                                 time.sleep(0.5)
@@ -593,31 +595,12 @@ var queue = [];
 for (let i = 0; i < data2.length; i++) {
     queue.push(getdata(i));
 }
-function get_queryid(name, defaultId) {
-    try {
-        let queryids = webpackChunk_twitter_responsive_web;
-        for (let i = 0; i < queryids.length; i++) {
-            for (let key in queryids[i][1]) {
-                try {
-                    if (queryids[key].length === 1) {
-                        let tmp = {};
-                        queryids[key](tmp);
-                        if (tmp.exports.operationName === name) return tmp.exports.queryId;
-                    }
-                } catch {}
-            }
-        }
-        return defaultId;
-    } catch {
-        return defaultId;
-    }
-}
 function getdata(i) {
     const p = new Promise((resolve, reject) => {
         data.variables.userId = data2[i][1];
         let param = "?" + Object.entries(data).map((e) => { return `${e[0]}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&");
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', "https://api.twitter.com/graphql/" + get_queryid("UserByRestId", "gUIQEk2xDGzQTX8Ii0Yesw") + "/UserByRestId" + param);
+        xhr.open('GET', arguments[2] + param);
         xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
         xhr.setRequestHeader('x-csrf-token', token);
         xhr.setRequestHeader('x-twitter-active-user', 'yes');
@@ -645,7 +628,7 @@ function getdata(i) {
 }
 const promise = Promise.all(queue);
 promise.then((e) => window.data = data2);
-            """, getuser_body, data)
+            """, getuser_body, data, getuser_url)
             while True:
                 time.sleep(0.01)
                 res = driver2.execute_script("return window.data")

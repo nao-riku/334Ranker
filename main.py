@@ -441,7 +441,28 @@ def retweet(id, driver):
         }
     
         driver.execute_script("""
-var url = 'https://api.twitter.com/graphql/ojPdsZsimiJrUGLR1sjUtA/CreateRetweet';
+function get_queryid(name, defaultId) {
+    try {
+        let queryids = webpackChunk_twitter_responsive_web;
+        for (let i = 0; i < queryids.length; i++) {
+            for (let key in queryids[i][1]) {
+                try {
+                    if (queryids[key].length === 1) {
+                        let tmp = {};
+                        queryids[key](tmp);
+                        if (tmp.exports.operationName === name) return tmp.exports.queryId;
+                    }
+                } catch {}
+            }
+        }
+        return defaultId;
+    } catch {
+        return defaultId;
+    }
+}
+
+var queryid = get_queryid('CreateRetweet', 'ojPdsZsimiJrUGLR1sjUtA');
+var url = 'https://api.twitter.com/graphql/' + queryid + '/CreateRetweet';
 
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
@@ -449,6 +470,9 @@ cookie.forEach(function (value) {
     let content = value.split('=');
     if (content[0] == "ct0") token = content[1];
 })
+
+var data = arguments[0];
+data.queryId = queryid;
 
 var xhr = new XMLHttpRequest();
 xhr.open('POST', url);
@@ -459,7 +483,7 @@ xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
 xhr.setRequestHeader('x-twitter-client-language', 'ja');
 xhr.setRequestHeader('Content-Type', 'application/json');
 xhr.withCredentials = true;
-xhr.send(JSON.stringify(arguments[0]));
+xhr.send(JSON.stringify(data));
 
 """, data)
     except Exception as e:
@@ -569,12 +593,31 @@ var queue = [];
 for (let i = 0; i < data2.length; i++) {
     queue.push(getdata(i));
 }
+function get_queryid(name, defaultId) {
+    try {
+        let queryids = webpackChunk_twitter_responsive_web;
+        for (let i = 0; i < queryids.length; i++) {
+            for (let key in queryids[i][1]) {
+                try {
+                    if (queryids[key].length === 1) {
+                        let tmp = {};
+                        queryids[key](tmp);
+                        if (tmp.exports.operationName === name) return tmp.exports.queryId;
+                    }
+                } catch {}
+            }
+        }
+        return defaultId;
+    } catch {
+        return defaultId;
+    }
+}
 function getdata(i) {
     const p = new Promise((resolve, reject) => {
         data.variables.userId = data2[i][1];
         let param = "?" + Object.entries(data).map((e) => { return `${e[0]}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&");
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', "https://api.twitter.com/graphql/gUIQEk2xDGzQTX8Ii0Yesw/UserByRestId" + param);
+        xhr.open('GET', "https://api.twitter.com/graphql/" + get_queryid("UserByRestId", "gUIQEk2xDGzQTX8Ii0Yesw") + "/UserByRestId" + param);
         xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
         xhr.setRequestHeader('x-csrf-token', token);
         xhr.setRequestHeader('x-twitter-active-user', 'yes');
@@ -713,10 +756,30 @@ time1.setHours(3);
 time1.setMinutes(34);
 time1.setSeconds(0);
 time1.setMilliseconds(0);
+function get_queryid(name, defaultId) {
+    try {
+        let queryids = webpackChunk_twitter_responsive_web;
+        for (let i = 0; i < queryids.length; i++) {
+            for (let key in queryids[i][1]) {
+                try {
+                    if (queryids[key].length === 1) {
+                        let tmp = {};
+                        queryids[key](tmp);
+                        if (tmp.exports.operationName === name) return tmp.exports.queryId;
+                    }
+                } catch {}
+            }
+        }
+        return defaultId;
+    } catch {
+        return defaultId;
+    }
+}
 var data = arguments[0];
 data.variables["cursor"] = "";
 data.variables.seenTweetIds = [];
-data.queryId = "1UNiFOLvPTRpu8zVk-LAXw";
+let queryid = get_queryid("HomeLatestTimeline", "1UNiFOLvPTRpu8zVk-LAXw");
+data.queryId = queryid;
 get_tweets();
 function setheader(xhr) {
     xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
@@ -778,7 +841,7 @@ function get_tweets2(max_id) {
 function get_tweets3(d) {
     try {
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://api.twitter.com/graphql/1UNiFOLvPTRpu8zVk-LAXw/HomeLatestTimeline');
+        xhr.open('POST', 'https://api.twitter.com/graphql/' + queryid + '/HomeLatestTimeline');
         setheader(xhr);
         xhr.setRequestHeader('content-type', 'application/json');
         xhr.onload = function () {

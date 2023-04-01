@@ -839,14 +839,14 @@ function get_tweets3(d) {
         xhr.onload = function () {
             let entries = JSON.parse(xhr.responseText).data.home.home_timeline_urt.instructions[0].entries;
             for (let i = 0; i < entries.length; i++) {
-                if (entries[i].entryId.indexOf("promoted") == -1 && entries[i].entryId.indexOf("cursor") == -1) {
+                if (!entries[i].entryId.includes("promoted") && !entries[i].entryId.includes("cursor")) {
                     try {
-                        if (~entries[i].entryId.indexOf("home")) var res = entries[i].content.items[0].item.itemContent.tweet_results.result;
+                        if (entries[i].entryId.includes("home")) var res = entries[i].content.items[0].item.itemContent.tweet_results.result;
                         else var res = entries[i].content.itemContent.tweet_results.result;
                         if ("tweet" in res) res = res.tweet;
                         let legacy = res.legacy;
                         if (new Date(legacy.created_at) < time1) {
-                            if (~entries[i].entryId.indexOf("home")) continue;
+                            if (entries[i].entryId.includes("home")) continue;
                             else {
                                 out = out.concat(out3);
                                 final();
@@ -865,7 +865,7 @@ function get_tweets3(d) {
                         console.log(e);
                     }
                 }
-                if (~entries[i].entryId.indexOf("bottom")) {
+                if (entries[i].entryId.includes("bottom")) {
                     let data2 = Object.assign({}, data);
                     data2.variables.cursor = entries[i].content.value;
                     get_tweets3(data2);

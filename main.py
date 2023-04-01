@@ -352,6 +352,10 @@ def receive(dict, driver):
                         user_name = "@" + item["status"]["data"]["user"]["screen_name"]
                     rep_text = has_rank(user_id, user_name, item)
                     if rep_text == False:
+                        text = item["status"]["data"]["full_text"].lower()
+                        mentions = item["status"]["data"]["entities"]["user_mentions"]
+                        for user in mentions:
+                            text = text.replace("@" + user["screen_name"].lower(), "")
                         if "ランク" in text or "ﾗﾝｸ" in text or "らんく" in text or "rank" in text or "ランキング" in text or "ﾗﾝｷﾝｸﾞ" in text:
                             return "ランキングは準備中です\nしばらくお待ちください"
                 else:

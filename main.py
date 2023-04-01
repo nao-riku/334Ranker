@@ -751,7 +751,7 @@ function get_queryid(name, defaultId) {
                         queryids[i][1][key](tmp);
                         if (tmp.exports.operationName === name) return tmp.exports.queryId;
                     }
-                } catch {}
+                } catch { }
             }
         }
         return defaultId;
@@ -780,18 +780,20 @@ function get_tweets(max_id) {
     setheader(xhr);
     xhr.send();
     xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            res = JSON.parse(xhr.responseText).modules;
-            if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) get_tweets2();
-            else {
-                if (max_id !== undefined) res.shift();
-                for (let i = 0; i < res.length; i++) {
-                    let tweet = res[i].status.data;
-                    tweet["index"] = parseInt(BigInt(tweet.id_str).toString(2).slice(0, -22), 2) + 1288834974657;
-                    out.push(tweet);
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                res = JSON.parse(xhr.responseText).modules;
+                if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) get_tweets2();
+                else {
+                    if (max_id !== undefined) res.shift();
+                    for (let i = 0; i < res.length; i++) {
+                        let tweet = res[i].status.data;
+                        tweet["index"] = parseInt(BigInt(tweet.id_str).toString(2).slice(0, -22), 2) + 1288834974657;
+                        out.push(tweet);
+                    }
+                    get_tweets(out[out.length - 1].id_str);
                 }
-                get_tweets(out[out.length - 1].id_str);
-            }
+            } else get_tweets2();
         }
     }
 }
@@ -802,22 +804,24 @@ function get_tweets2(max_id) {
     setheader(xhr);
     xhr.send();
     xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            res = JSON.parse(xhr.responseText);
-            if ('statuses' in res) {
-                res = res.statuses;
-                if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
-                    out = out.concat(out2)
-                    get_tweets3(data);
-                } else {
-                    if (max_id !== undefined) res.shift();
-                    for (let i = 0; i < res.length; i++) {
-                        let tweet = res[i];
-                        tweet["index"] = parseInt(BigInt(tweet.id_str).toString(2).slice(0, -22), 2) + 1288834974657;
-                        out2.push(res[i]);
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                res = JSON.parse(xhr.responseText);
+                if ('statuses' in res) {
+                    res = res.statuses;
+                    if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
+                        out = out.concat(out2)
+                        get_tweets3(data);
+                    } else {
+                        if (max_id !== undefined) res.shift();
+                        for (let i = 0; i < res.length; i++) {
+                            let tweet = res[i];
+                            tweet["index"] = parseInt(BigInt(tweet.id_str).toString(2).slice(0, -22), 2) + 1288834974657;
+                            out2.push(res[i]);
+                        }
+                        get_tweets2(out2[out2.length - 1].id_str);
                     }
-                    get_tweets2(out2[out2.length - 1].id_str);
-                }
+                } else get_tweets3(data);
             } else get_tweets3(data);
         }
     }

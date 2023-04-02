@@ -590,6 +590,7 @@ def browser2(driver, driver2):
 window.data = "";
 var data = arguments[0];
 var data2 = arguments[1];
+var url = arguments[2].split("?")[0];
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
 cookie.forEach(function (value) {
@@ -605,7 +606,7 @@ function getdata(i) {
         data.variables.userId = data2[i][1];
         let param = "?" + Object.entries(data).map((e) => { return `${e[0]}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&");
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', arguments[2].split("?")[0] + param);
+        xhr.open('GET', url + param);
         xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
         xhr.setRequestHeader('x-csrf-token', token);
         xhr.setRequestHeader('x-twitter-active-user', 'yes');

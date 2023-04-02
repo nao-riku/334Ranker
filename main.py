@@ -378,7 +378,7 @@ def receive(dict, driver):
                         rep_text = has_rank(user_id, user_name, item)
                         if rep_text == False:
                             orig_time = TweetIdTime(int(item["status"]["data"]["in_reply_to_status_id_str"]))
-                            rep_text = "ツイート時刻: " + TimeToStr(orig_time)
+                            rep_text = "ツイート時刻：" + TimeToStr(orig_time)
 
             if rep_text != False:
                 print(item["status"]["data"]["user"]["name"])
@@ -767,7 +767,7 @@ function get_queryid(name, defaultId) {
 var data = arguments[0];
 data.variables["cursor"] = "";
 data.variables.seenTweetIds = [];
-let queryid = get_queryid("HomeLatestTimeline", "1UNiFOLvPTRpu8zVk-LAXw");
+let queryid = get_queryid("HomeLatestTimeline", "VyGvysk4GUAl_et492Gs1Q");
 data.queryId = queryid;
 get_tweets();
 function setheader(xhr) {

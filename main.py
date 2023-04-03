@@ -269,7 +269,7 @@ def get_kyui(pt):
 
 def get_rank(key, name):
     if world_rank == {}:
-        return False
+        return True
     if key in world_rank:
         if world_rank[key][4] != world_rank[key][6]:
             rep_text2 = "\n参考記録: " + world_rank[key][6]
@@ -342,7 +342,7 @@ def receive(dict, driver):
                 if user_name == "":
                     user_name = "@" + item["status"]["data"]["user"]["screen_name"]
                 rep_text = has_rank(user_id, user_name, item)
-                if rep_text == False:
+                if rep_text == False or rep_text == True:
                     rep_text = get_result(user_id, user_name)
             else:
                 if item["status"]["data"]["in_reply_to_user_id_str"] == ranker_id:
@@ -351,13 +351,8 @@ def receive(dict, driver):
                     if user_name == "":
                         user_name = "@" + item["status"]["data"]["user"]["screen_name"]
                     rep_text = has_rank(user_id, user_name, item)
-                    if rep_text == False:
-                        text = item["status"]["data"]["full_text"].lower()
-                        mentions = item["status"]["data"]["entities"]["user_mentions"]
-                        for user in mentions:
-                            text = text.replace("@" + user["screen_name"].lower(), "")
-                        if "ランク" in text or "ﾗﾝｸ" in text or "らんく" in text or "rank" in text or "ランキング" in text or "ﾗﾝｷﾝｸﾞ" in text:
-                            rep_text = "ランキングは準備中です\nしばらくお待ちください"
+                    if rep_text == True:
+                        rep_text = "ランキングは準備中です\nしばらくお待ちください"
                 else:
                     user_id = item["status"]["data"]["in_reply_to_user_id_str"]
                     user_name = ""
@@ -376,6 +371,8 @@ def receive(dict, driver):
                             if user_name == "":
                                 user_name = "@" + item["status"]["data"]["in_reply_to_screen_name"]
                         rep_text = has_rank(user_id, user_name, item)
+                        if rep_text == True:
+                            rep_text = "ランキングは準備中です\nしばらくお待ちください"
                         if rep_text == False:
                             orig_time = TweetIdTime(int(item["status"]["data"]["in_reply_to_status_id_str"]))
                             rep_text = "ツイート時刻：" + TimeToStr(orig_time)

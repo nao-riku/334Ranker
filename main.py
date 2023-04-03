@@ -373,7 +373,7 @@ def receive(dict, driver):
                         rep_text = has_rank(user_id, user_name, item)
                         if rep_text == True:
                             rep_text = "ランキングは準備中です\nしばらくお待ちください"
-                        if rep_text == False:
+                        elif rep_text == False:
                             orig_time = TweetIdTime(int(item["status"]["data"]["in_reply_to_status_id_str"]))
                             rep_text = "ツイート時刻：" + TimeToStr(orig_time)
 

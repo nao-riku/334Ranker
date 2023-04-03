@@ -357,7 +357,7 @@ def receive(dict, driver):
                         for user in mentions:
                             text = text.replace("@" + user["screen_name"].lower(), "")
                         if "ランク" in text or "ﾗﾝｸ" in text or "らんく" in text or "rank" in text or "ランキング" in text or "ﾗﾝｷﾝｸﾞ" in text:
-                            return "ランキングは準備中です\nしばらくお待ちください"
+                            rep_text = "ランキングは準備中です\nしばらくお待ちください"
                 else:
                     user_id = item["status"]["data"]["in_reply_to_user_id_str"]
                     user_name = ""

@@ -601,7 +601,7 @@ for (let i = 0; i < data2.length; i++) {
 function getdata(i) {
     const p = new Promise((resolve, reject) => {
         data.variables.userId = data2[i][1];
-        let param = "?" + Object.entries(data).map((e) => { return `${e[0]}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&").replaceAll("%22", "");
+        let param = "?" + Object.entries(data).map((e) => { return `${e[0].replaceAll("%22", "")}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&");
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url + param);
         xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');

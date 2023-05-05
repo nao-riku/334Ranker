@@ -28,6 +28,7 @@ getuser_url = ""
 getuser_body = {}
 not_url = ""
 not_body = {}
+idlist = []
 
 start_now = datetime.datetime.now()
 start_time = ""
@@ -350,6 +351,7 @@ def TimeToStr(d):
 
 
 def receive(dict, driver):
+    global idlist
     ranker_id = "1558892196069134337"
 
     for item in dict:
@@ -398,11 +400,13 @@ def receive(dict, driver):
                             rep_text = "ツイート時刻：" + TimeToStr(orig_time)
 
             if rep_text != False:
-                print(item["status"]["data"]["user"]["name"])
-                req = copy.deepcopy(post_body)
-                req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]
-                req["variables"]["tweet_text"] = rep_text
-                threading.Thread(target=reply, args=(req, driver,)).start()
+                if item["status"]["data"]["id_str"] not in idlist:
+                    idlist.append(item["status"]["data"]["id_str"])
+                    print(item["status"]["data"]["user"]["name"])
+                    req = copy.deepcopy(post_body)
+                    req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]
+                    req["variables"]["tweet_text"] = rep_text
+                    threading.Thread(target=reply, args=(req, driver,)).start()
 
 
 

@@ -26,6 +26,8 @@ load_res_yet = True
 timeline_body = {}
 getuser_url = ""
 getuser_body = {}
+not_url = ""
+not_body = {}
 
 start_now = datetime.datetime.now()
 start_time = ""
@@ -100,7 +102,7 @@ def tweet(driver):
     
 
 def login_twitter(account, password, tel, driver):
-    global timeline_body, getuser_body, getuser_url
+    global timeline_body, getuser_body, getuser_url, not_url, not_body
     for _ in range(5):
         try:
             driver.get('https://twitter.com/i/flow/login')
@@ -179,6 +181,24 @@ def login_twitter(account, password, tel, driver):
                                     print("set getuser_body")
                                     break
                 if getuser_body != {}:
+                    break
+                time.sleep(0.5)
+
+            driver.get('https://twitter.com/notifications/mentions')
+            time.sleep(20)
+            
+            for _ in range(5):
+                for request in driver.requests:
+                    if request.response:
+                        if "mentions.json" in request.url:
+                            not_url = request.url
+                            if request.body != b'':
+                                not_body = json.loads(request.body)
+                            else:
+                                not_body = request.params
+                            print("set not_body")
+                            break
+                if not_body != {}:
                     break
                 time.sleep(0.5)
                 
@@ -430,6 +450,96 @@ xhr.send();
                 get_allresult()
             break
         time.sleep(0.01)
+
+
+
+def interval2(since, end, driver):
+    driver.execute_script("""
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+});
+function setheader(xhr) {
+    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+    xhr.setRequestHeader('x-csrf-token', token);
+    xhr.setRequestHeader('x-twitter-active-user', 'yes');
+    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+    xhr.setRequestHeader('x-twitter-client-language', 'ja');
+    xhr.withCredentials = true;
+}
+window.adaptive = [];
+let from = new Date(arguments[0] * 1000);
+let until = new Date(arguments[1] * 1000);
+let refresh = "";
+let param = "?" + Object.entries(arguments[3]).map((e) => { return `${e[0]}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&").replaceAll("%22", "");
+
+let not = setInterval(function (arguments) {
+    get_notifications("&cursor=" + refresh, arguments);
+}, 7000, arguments);
+
+function get_notifications(cursor, arguments) {
+    try {
+        let xhr = new XMLHttpRequest();
+        let url = arguments[2].split("?")[0] + param + cursor;
+        xhr.open('GET', url);
+        get_tweets(cursor, xhr);
+    } catch { }
+}
+
+function get_tweets(cursor, xhr, isadaptive) {
+    setheader(xhr);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            let res = JSON.parse(xhr.responseText);
+            let tweets = res.globalObjects.tweets;
+            let users = res.globalObjects.users;
+            let timelines = res.timeline.instructions;
+            let timeline = [];
+            for (let j = 0; j < timelines.length; j++) {
+                if ("addEntries" in timelines[j]) timeline = timeline.concat(timelines[j].addEntries.entries);
+                else if ("replaceEntry" in timelines[j]) timeline.push(timelines[j].replaceEntry.entry);
+            }
+            for (let i = 0; i < timeline.length; i++) {
+                try {
+                    if (!timeline[i].entryId.includes("cursor")) {
+                        let id = timeline[i].content.item.content.tweet.id;
+                        let tweet = tweets[id];
+                        if (!tweet.full_text.toLowerCase().includes("@rank334")) continue;
+                        if (new Date(tweet.created_at) < from) continue;
+                        if (until <= new Date(tweet.created_at)) {
+                            clearInterval(not);
+                            continue;
+                        }
+                        tweet["user"] = users[tweet.user_id_str];
+                        let status = {
+                            "status": {
+                                "data": tweet
+                            }
+                        }
+                        window.adaptive.push(status);
+                    }
+                    else if (timeline[i].entryId.includes("top")) refresh = timeline[i].content.operation.cursor.value;
+                } catch { }
+            }
+        }
+    }
+}
+    """, int(since.timestamp()), int(end.timestamp()), not_url, not_body)
+    while True:
+        time.sleep(0.01)
+        out = driver.execute_script("""
+let adaptive = JSON.parse(JSON.stringify(window.adaptive));
+window.adaptive = [];
+return adaptive;
+""")
+        if out != []:
+            threading.Thread(target=receive, args=(out, driver,)).start()
+        else:
+            if end + datetime.timedelta(seconds=10) < datetime.datetime.now():
+                break
 
 
 
@@ -958,6 +1068,7 @@ def start():
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
                 end_time = times[i][0]
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
+            threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
                 notice(driver)

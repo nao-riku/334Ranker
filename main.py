@@ -458,7 +458,9 @@ xhr.send();
 
 
 def interval2(since, end, driver):
-    driver.execute_script("""
+    while True:
+        if since < datetime.datetime.now():
+            driver.execute_script("""
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
 cookie.forEach(function (value) {
@@ -480,6 +482,7 @@ let refresh = "";
 let param = "?" + Object.entries(arguments[3]).map((e) => { return `${e[0]}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&").replaceAll("%22", "");
 
 let not = setInterval(function (arguments) {
+    if (until < new Date()) clearInterval(not);
     get_notifications("&cursor=" + refresh, arguments);
 }, 8000, arguments);
 
@@ -492,7 +495,7 @@ function get_notifications(cursor, arguments) {
     } catch { }
 }
 
-function get_tweets(cursor, xhr, isadaptive) {
+function get_tweets(cursor, xhr) {
     setheader(xhr);
     xhr.send();
     xhr.onreadystatechange = function () {
@@ -531,19 +534,21 @@ function get_tweets(cursor, xhr, isadaptive) {
         }
     }
 }
-    """, int(since.timestamp()), int(end.timestamp()), not_url, not_body)
-    while True:
-        time.sleep(0.01)
-        out = driver.execute_script("""
+""", int(since.timestamp()), int(end.timestamp()), not_url, not_body)
+            while True:
+                time.sleep(0.01)
+                out = driver.execute_script("""
 let adaptive = JSON.parse(JSON.stringify(window.adaptive));
 window.adaptive = [];
 return adaptive;
 """)
-        if out != []:
-            threading.Thread(target=receive, args=(out, driver,)).start()
-        else:
-            if end + datetime.timedelta(seconds=10) < datetime.datetime.now():
-                break
+                if out != []:
+                    threading.Thread(target=receive, args=(out, driver,)).start()
+                else:
+                    if end + datetime.timedelta(seconds=20) < datetime.datetime.now():
+                        break
+            break
+        time.sleep(0.01)
 
 
 

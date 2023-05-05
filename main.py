@@ -477,7 +477,7 @@ let param = "?" + Object.entries(arguments[3]).map((e) => { return `${e[0]}=${en
 
 let not = setInterval(function (arguments) {
     get_notifications("&cursor=" + refresh, arguments);
-}, 7000, arguments);
+}, 8000, arguments);
 
 function get_notifications(cursor, arguments) {
     try {

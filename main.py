@@ -26,6 +26,9 @@ load_res_yet = True
 timeline_body = {}
 getuser_url = ""
 getuser_body = {}
+not_url = ""
+not_body = {}
+idlist = []
 
 start_now = datetime.datetime.now()
 start_time = ""
@@ -100,7 +103,7 @@ def tweet(driver):
     
 
 def login_twitter(account, password, tel, driver):
-    global timeline_body, getuser_body, getuser_url
+    global timeline_body, getuser_body, getuser_url, not_url, not_body
     for _ in range(5):
         try:
             driver.get('https://twitter.com/i/flow/login')
@@ -108,14 +111,19 @@ def login_twitter(account, password, tel, driver):
             element = WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.NAME, "text")))
             time.sleep(1)
             
+            act = ActionChains(driver)
+            
             element_account = driver.find_element(By.TAG_NAME, "input")
-            element_account.send_keys(account)
-            time.sleep(2) 
+            element_account.send_keys("")
+            for i in range(len(account)):
+                time.sleep(1)
+                act.send_keys(account[i])
+                act.perform()
+            time.sleep(2)
             element_account.send_keys(Keys.ENTER)
             time.sleep(20)
 
             element_pass = driver.find_elements(By.TAG_NAME, "input")[1]
-            act = ActionChains(driver)
             for i in range(len(password)):
                 time.sleep(1)
                 act.send_keys(password[i])
@@ -183,6 +191,24 @@ def login_twitter(account, password, tel, driver):
                                     print("set getuser_body")
                                     break
                 if getuser_body != {}:
+                    break
+                time.sleep(0.5)
+
+            driver.get('https://twitter.com/notifications/mentions')
+            time.sleep(20)
+            
+            for _ in range(5):
+                for request in driver.requests:
+                    if request.response:
+                        if "mentions.json" in request.url:
+                            not_url = request.url
+                            if request.body != b'':
+                                not_body = json.loads(request.body)
+                            else:
+                                not_body = request.params
+                            print("set not_body")
+                            break
+                if not_body != {}:
                     break
                 time.sleep(0.5)
                 
@@ -334,6 +360,7 @@ def TimeToStr(d):
 
 
 def receive(dict, driver):
+    global idlist
     ranker_id = "1558892196069134337"
 
     for item in dict:
@@ -382,11 +409,13 @@ def receive(dict, driver):
                             rep_text = "ツイート時刻：" + TimeToStr(orig_time)
 
             if rep_text != False:
-                print(item["status"]["data"]["user"]["name"])
-                req = copy.deepcopy(post_body)
-                req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]
-                req["variables"]["tweet_text"] = rep_text
-                threading.Thread(target=reply, args=(req, driver,)).start()
+                if item["status"]["data"]["id_str"] not in idlist:
+                    idlist.append(item["status"]["data"]["id_str"])
+                    print(item["status"]["data"]["user"]["name"])
+                    req = copy.deepcopy(post_body)
+                    req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]
+                    req["variables"]["tweet_text"] = rep_text
+                    threading.Thread(target=reply, args=(req, driver,)).start()
 
 
 
@@ -432,6 +461,101 @@ xhr.send();
                 receive(out, driver)
             if datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 36, 0) < until and load_res_yet:
                 get_allresult()
+            break
+        time.sleep(0.01)
+
+
+
+def interval2(since, end, driver):
+    while True:
+        if since < datetime.datetime.now():
+            driver.execute_script("""
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+});
+function setheader(xhr) {
+    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+    xhr.setRequestHeader('x-csrf-token', token);
+    xhr.setRequestHeader('x-twitter-active-user', 'yes');
+    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+    xhr.setRequestHeader('x-twitter-client-language', 'ja');
+    xhr.withCredentials = true;
+}
+window.adaptive = [];
+let from = new Date(arguments[0] * 1000);
+let until = new Date(arguments[1] * 1000);
+let refresh = "";
+let param = "?" + Object.entries(arguments[3]).map((e) => { return `${e[0]}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&").replaceAll("%22", "");
+
+let not = setInterval(function (arguments) {
+    if (until < new Date()) clearInterval(not);
+    get_notifications("&cursor=" + refresh, arguments);
+}, 8000, arguments);
+
+function get_notifications(cursor, arguments) {
+    try {
+        let xhr = new XMLHttpRequest();
+        let url = arguments[2].split("?")[0] + param + cursor;
+        xhr.open('GET', url);
+        get_tweets(cursor, xhr);
+    } catch { }
+}
+
+function get_tweets(cursor, xhr) {
+    setheader(xhr);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            let res = JSON.parse(xhr.responseText);
+            let tweets = res.globalObjects.tweets;
+            let users = res.globalObjects.users;
+            let timelines = res.timeline.instructions;
+            let timeline = [];
+            for (let j = 0; j < timelines.length; j++) {
+                if ("addEntries" in timelines[j]) timeline = timeline.concat(timelines[j].addEntries.entries);
+                else if ("replaceEntry" in timelines[j]) timeline.push(timelines[j].replaceEntry.entry);
+            }
+            for (let i = 0; i < timeline.length; i++) {
+                try {
+                    if (!timeline[i].entryId.includes("cursor")) {
+                        let id = timeline[i].content.item.content.tweet.id;
+                        let tweet = tweets[id];
+                        if (!tweet.full_text.toLowerCase().includes("@rank334")) continue;
+                        if (new Date(tweet.created_at) < from) continue;
+                        if (until <= new Date(tweet.created_at)) {
+                            clearInterval(not);
+                            continue;
+                        }
+                        tweet["user"] = users[tweet.user_id_str];
+                        let status = {
+                            "status": {
+                                "data": tweet
+                            }
+                        }
+                        window.adaptive.push(status);
+                    }
+                    else if (timeline[i].entryId.includes("top")) refresh = timeline[i].content.operation.cursor.value;
+                } catch { }
+            }
+        }
+    }
+}
+""", int(since.timestamp()), int(end.timestamp()), not_url, not_body)
+            while True:
+                time.sleep(0.01)
+                out = driver.execute_script("""
+let adaptive = JSON.parse(JSON.stringify(window.adaptive));
+window.adaptive = [];
+return adaptive;
+""")
+                if out != []:
+                    threading.Thread(target=receive, args=(out, driver,)).start()
+                else:
+                    if end + datetime.timedelta(seconds=20) < datetime.datetime.now():
+                        break
             break
         time.sleep(0.01)
 
@@ -605,7 +729,7 @@ for (let i = 0; i < data2.length; i++) {
 function getdata(i) {
     const p = new Promise((resolve, reject) => {
         data.variables.userId = data2[i][1];
-        let param = "?" + Object.entries(data).map((e) => { return `${e[0]}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&").replaceAll("%22", "");
+        let param = "?" + Object.entries(data).map((e) => { return `${e[0].replaceAll("%22", "")}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&");
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url + param);
         xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
@@ -962,6 +1086,7 @@ def start():
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
                 end_time = times[i][0]
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
+            threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
                 notice(driver)

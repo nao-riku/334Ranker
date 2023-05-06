@@ -364,7 +364,8 @@ def receive(dict, driver):
     ranker_id = "1558892196069134337"
 
     for item in dict:
-	    
+        print(item["status"]["data"]["user"]["name"])
+        
         if item["status"]["data"]["user"]["id_str"] != ranker_id:
             rep_text = False
             if item["status"]["data"]["in_reply_to_status_id_str"] == None:
@@ -430,7 +431,7 @@ def interval(since, until, end, index, driver):
                 threading.Thread(target=interval, args=(until, until + datetime.timedelta(seconds = add), end, index + 1, driver,)).start()
             since2 = since - datetime.timedelta(seconds = 1)
             res = driver.execute_async_script("""
-var url = 'https://api.twitter.com/1.1/search/universal.json?q=@rank334 since:""" + since2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote&count=100&result_type=recent&tweet_mode=extended';
+var url = 'https://api.twitter.com/1.1/search/universal.json?q=@rank334 since:""" + since2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -from:rank334&count=100&result_type=recent&tweet_mode=extended';
 
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";

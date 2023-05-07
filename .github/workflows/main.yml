@@ -44,7 +44,6 @@ jobs:
           GAS_URL: ${{ secrets.GAS_URL }}
           HTML_URL: ${{ secrets.HTML_URL }}
           HTML_URL2: ${{ secrets.HTML_URL2 }}
-          NAME: ${{ secrets.NAME }}
           PASS: ${{ secrets.PASS }}
           TEL: ${{ secrets.TEL }}
           TZ: "Asia/Tokyo"

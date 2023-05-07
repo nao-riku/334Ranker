@@ -20,6 +20,7 @@ import traceback
 
 post_url = ""
 post_body = {}
+post_body_2 = {}
 today_result = {}
 world_rank = {}
 load_res_yet = True
@@ -29,6 +30,7 @@ getuser_body = {}
 not_url = ""
 not_body = {}
 idlist = []
+driver3 = ""
 
 start_now = datetime.datetime.now()
 start_time = ""
@@ -222,9 +224,142 @@ def login_twitter(account, password, tel, driver):
 
 
 
+def login_twitter2(account, password, tel, driver):
+    for _ in range(5):
+        try:
+            driver3.get('https://twitter.com/i/flow/login')
+            driver3.maximize_window()
+            element = WebDriverWait(driver3, 60).until(EC.presence_of_element_located((By.NAME, "text")))
+            time.sleep(1)
+            
+            act = ActionChains(driver3)
+            
+            element_account = driver3.find_element(By.TAG_NAME, "input")
+            element_account.send_keys("")
+            for i in range(len(account)):
+                time.sleep(1)
+                act.send_keys(account[i])
+                act.perform()
+            time.sleep(2)
+            element_account.send_keys(Keys.ENTER)
+            time.sleep(20)
+
+            element_pass = driver3.find_elements(By.TAG_NAME, "input")[1]
+            for i in range(len(password)):
+                time.sleep(1)
+                act.send_keys(password[i])
+                act.perform()
+            time.sleep(2)
+            element_pass.send_keys(Keys.ENTER)
+            time.sleep(20)
+
+            element_tel = driver3.find_elements(By.NAME, "text")
+            if len(element_tel) > 0:
+                element_tel[0].send_keys(tel)
+                time.sleep(2) 
+                element_tel[0].send_keys(Keys.ENTER)
+                time.sleep(20)
+        
+        except Exception as e:
+            traceback.print_exc()
+            time.sleep(2)
+        else:
+            break
+
+
+    global post_body_2
+    for _ in range(5):
+        try:
+            driver3.get('https://twitter.com/Rank334_2/status/1624490398730321920')
+            try:
+                element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
+            except:
+                element = WebDriverWait(driver3, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='/login']")))
+                time.sleep(1)
+                driver3.find_element(By.CSS_SELECTOR, "[href='/login']").click()
+                time.sleep(2)
+                driver3.get('https://twitter.com/Rank334_2/status/1624490398730321920')
+                element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
+            time.sleep(1)
+
+            element_box = driver3.find_element(By.CSS_SELECTOR, "[role=textbox]")
+            element_box.send_keys("a")
+            time.sleep(2) 
+            
+            driver3.find_element(By.CSS_SELECTOR, "[data-testid=tweetButtonInline]").click()
+            time.sleep(2)
+
+
+            for _ in range(5):
+                for request in driver3.requests:
+                    if request.response:
+                        if "CreateTweet" in request.url:
+                            post_body2 = json.loads(request.body)
+                            time.sleep(0.5)
+                            if "variables" in post_body2:
+                                post_body_2 = post_body2
+                                print("set post_body_2")
+                                break
+                if post_body_2 != {}:
+                    break
+                time.sleep(0.5)
+                    
+
+            time.sleep(3)
+
+        except Exception as e:
+            traceback.print_exc()
+            time.sleep(2)
+        else:
+            break
+
+    
+    threading.Thread(target=check_unsend, args=(end_time, driver,)).start()
+
+
+
 def reply(req, driver):
     print("reply start", datetime.datetime.now())
     driver.execute_script("""
+var url = arguments[0];
+var data = JSON.stringify(arguments[1]);
+    
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+
+var xhr = new XMLHttpRequest();
+xhr.open('POST', url);
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+xhr.setRequestHeader('x-csrf-token', token);
+xhr.setRequestHeader('x-twitter-active-user', 'yes');
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+xhr.setRequestHeader('x-twitter-client-language', 'ja');
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.withCredentials = true;
+
+/*xhr.onload = function () {
+    let res = JSON.parse(xhr.responseText);
+    if ("errors" in res) window.unsend.push(data);
+}
+
+xhr.send(data);*/
+window.unsend.push(data);
+
+""", post_url, req)
+    
+
+
+def reply2(reqs):
+
+    for req in reqs:
+        print("reply2 start", datetime.datetime.now())
+        req = json.loads(req)
+        req["features"] = post_body_2["features"]
+        driver3.execute_script("""
 var url = arguments[0];
     
 var cookie = document.cookie.replaceAll(" ", "").split(";");
@@ -362,11 +497,12 @@ def TimeToStr(d):
 def receive(dict, driver):
     global idlist
     ranker_id = "1558892196069134337"
+    ranker_id_2 = "1556292536477843456"
 
     for item in dict:
         print(item["status"]["data"]["user"]["name"])
         
-        if item["status"]["data"]["user"]["id_str"] != ranker_id:
+        if item["status"]["data"]["user"]["id_str"] != ranker_id and item["status"]["data"]["user"]["id_str"] != ranker_id_2:
             rep_text = False
             if item["status"]["data"]["in_reply_to_status_id_str"] == None:
                 user_id = item["status"]["data"]["user"]["id_str"]
@@ -377,7 +513,7 @@ def receive(dict, driver):
                 if rep_text == False or rep_text == True:
                     rep_text = get_result(user_id, user_name)
             else:
-                if item["status"]["data"]["in_reply_to_user_id_str"] == ranker_id:
+                if item["status"]["data"]["in_reply_to_user_id_str"] == ranker_id or item["status"]["data"]["in_reply_to_user_id_str"] == ranker_id_2:
                     user_id = item["status"]["data"]["user"]["id_str"]
                     user_name = item["status"]["data"]["user"]["name"]
                     if user_name == "":
@@ -392,7 +528,7 @@ def receive(dict, driver):
                     mentions = item["status"]["data"]["entities"]["user_mentions"]
                     flag = False 
                     for user in mentions:
-                        if user["id_str"] == ranker_id and text_range[0] <= user["indices"][0] and user["indices"][1] <= text_range[1]:
+                        if (user["id_str"] == ranker_id or user["id_str"] == ranker_id_2) and text_range[0] <= user["indices"][0] and user["indices"][1] <= text_range[1]:
                             flag = True
                         if user["id_str"] == user_id:
                             user_name = user["name"]
@@ -431,7 +567,7 @@ def interval(since, until, end, index, driver):
                 threading.Thread(target=interval, args=(until, until + datetime.timedelta(seconds = add), end, index + 1, driver,)).start()
             since2 = since - datetime.timedelta(seconds = 1)
             res = driver.execute_async_script("""
-var url = 'https://api.twitter.com/1.1/search/universal.json?q=@rank334 since:""" + since2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -from:rank334&count=100&result_type=recent&tweet_mode=extended';
+var url = 'https://api.twitter.com/1.1/search/universal.json?q=@rank334 since:""" + since2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ -filter:retweet -filter:quote -from:rank334 -from:rank334_2&count=100&result_type=recent&tweet_mode=extended';
 
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
@@ -524,7 +660,7 @@ function get_tweets(cursor, xhr) {
                     if (!timeline[i].entryId.includes("cursor")) {
                         let id = timeline[i].content.item.content.tweet.id;
                         let tweet = tweets[id];
-                        if (!tweet.full_text.toLowerCase().includes("@rank334")) continue;
+                        if (!tweet.full_text.toLowerCase().includes("@rank334") && !tweet.full_text.toLowerCase().includes("@rank334_2")) continue;
                         if (new Date(tweet.created_at) < from) continue;
                         if (until <= new Date(tweet.created_at)) {
                             clearInterval(not);
@@ -559,6 +695,25 @@ return adaptive;
                         break
             break
         time.sleep(0.01)
+
+
+
+def check_unsend(end, driver):
+
+    driver.execute_script("window.unsend = []")
+    while True:
+        time.sleep(0.01)
+        out = driver.execute_script("""
+let unsend = JSON.parse(JSON.stringify(window.unsend));
+window.unsend = [];
+return unsend;
+""")
+        if out != []:
+            threading.Thread(target=reply2, args=(out,)).start()
+        else:
+            if end + datetime.timedelta(seconds=20) < datetime.datetime.now():
+                break
+
 
 
 
@@ -1049,7 +1204,7 @@ def notice(driver):
 
 
 def start():
-    global start_now, start_time, end_time
+    global start_now, start_time, end_time, driver3
     for _ in range(3):
         try:
             options=Options()
@@ -1059,6 +1214,7 @@ def start():
             options.add_argument("--disable-gpu")
             options.add_argument('--disable-dev-shm-usage')
             driver = webdriver.Chrome(options = options)
+            driver3 = webdriver.Chrome(options = options)
             
         except Exception as e:
             traceback.print_exc()
@@ -1082,7 +1238,8 @@ def start():
             end_time = times[i][1]
             
             get_allresult()
-            login_twitter(os.environ['NAME'], os.environ['PASS'], os.environ['TEL'], driver)
+            login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
+            login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
             if len(sys.argv) != 1:
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
                 end_time = times[i][0]

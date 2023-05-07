@@ -499,7 +499,6 @@ def receive(dict, driver):
     ranker_id_2 = "1556292536477843456"
 
     for item in dict:
-        print(item["status"]["data"]["user"]["name"])
         
         if item["status"]["data"]["user"]["id_str"] != ranker_id and item["status"]["data"]["user"]["id_str"] != ranker_id_2:
             rep_text = False

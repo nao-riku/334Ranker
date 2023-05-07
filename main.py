@@ -341,13 +341,12 @@ xhr.setRequestHeader('x-twitter-client-language', 'ja');
 xhr.setRequestHeader('Content-Type', 'application/json');
 xhr.withCredentials = true;
 
-/*xhr.onload = function () {
+xhr.onload = function () {
     let res = JSON.parse(xhr.responseText);
     if ("errors" in res) window.unsend.push(data);
 }
 
-xhr.send(data);*/
-window.unsend.push(data);
+xhr.send(data);
 
 """, post_url, req)
     

@@ -31,6 +31,7 @@ not_url = ""
 not_body = {}
 idlist = []
 driver3 = ""
+limit = 0
 
 start_now = datetime.datetime.now()
 start_time = ""
@@ -494,7 +495,7 @@ def TimeToStr(d):
 
 
 def receive(dict, driver):
-    global idlist
+    global idlist, limit
     ranker_id = "1558892196069134337"
     ranker_id_2 = "1556292536477843456"
 
@@ -550,7 +551,11 @@ def receive(dict, driver):
                     req = copy.deepcopy(post_body)
                     req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]
                     req["variables"]["tweet_text"] = rep_text
-                    threading.Thread(target=reply, args=(req, driver,)).start()
+                    limit += 1
+                    if limit >= 3 and datetime.datetime.now() > datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 40):
+                        threading.Thread(target=reply, args=(req, driver,)).start()
+                    else:
+                        threading.Thread(target=reply2, args=([req],)).start()
 
 
 
@@ -1222,13 +1227,13 @@ def start():
 
             
     times = [
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0)], #2:50
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0)], #6:50
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 11, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0)], #20:50
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0)], #14:50
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 19, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0)], #18:50
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 23, 20, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1)], #22:50
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1), datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 20, 0) + datetime.timedelta(days=1)]
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 4, 33, 0)], #0:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 4, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 8, 33, 0)], #4:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 8, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0)], #8:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0)], #12:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0)], #16:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)], #20:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)]
     ]
     for i in range(len(times)):
         if start_now < times[i][0]:

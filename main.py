@@ -447,9 +447,9 @@ def get_rank(key, name):
         rank2 = get_kyui(pt2)
                                                     
         return name + "\n\n級位: " + rank + "\n⠀最高pt: " + world_rank[key][2] + "\n⠀歴代: " + str(world_rank[key][3]) + " / " + world_rank["累計"][0] + "\n⠀現在pt: " + world_rank[key][4] + " (" + rank2 + "帯)\n⠀世界ランク: " + str(world_rank[key][5]) + " / " + world_rank["現在"][0] + rep_text2 +\
-                        "\n出場試合数: " + str(world_rank[key][7]) + "\n自己ベスト: " + world_rank[key][0] + " (" + str(world_rank[key][1]) + "回)\n戦績: 🥇×" + str(world_rank[key][8]) + " 🥈×" + str(world_rank[key][9]) + " 🥉×" + str(world_rank[key][10]) + " 📋×" + str(world_rank[key][11])
+                        "\n1s以内出場試合数: " + str(world_rank[key][7]) + "\n自己ベスト: " + world_rank[key][0] + " (" + str(world_rank[key][1]) + "回)\n戦績: 🥇×" + str(world_rank[key][8]) + " 🥈×" + str(world_rank[key][9]) + " 🥉×" + str(world_rank[key][10]) + " 📋×" + str(world_rank[key][11])
     else:
-        return name + "\n\n最高pt: -\n歴代: - / " + world_rank["累計"][0] + "\n現在pt: -\n世界ランク: - / " + world_rank["現在"][0] + "\n出場試合数: 0\n自己ベスト: -\n戦績: 🥇×0 🥈×0 🥉×0 📋×0"
+        return name + "\n\n最高pt: -\n歴代: - / " + world_rank["累計"][0] + "\n現在pt: -\n世界ランク: - / " + world_rank["現在"][0] + "\n1s以内出場試合数: 0\n自己ベスト: -\n戦績: 🥇×0 🥈×0 🥉×0 📋×0"
 
 
 def has_rank(key, name, item):
@@ -552,10 +552,10 @@ def receive(dict, driver):
                     req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]
                     req["variables"]["tweet_text"] = rep_text
                     limit += 1
-                    if limit <= 3 and datetime.datetime.now() > datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 40):
-                        threading.Thread(target=reply, args=(req, driver,)).start()
-                    else:
+                    if limit >= 290 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 45, 0):
                         threading.Thread(target=reply2, args=([json.dumps(req)],)).start()
+                    else:
+                        threading.Thread(target=reply, args=(req, driver,)).start()
 
 
 

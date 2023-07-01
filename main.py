@@ -1122,6 +1122,7 @@ function get_tweets3(d) {
         setheader(xhr);
         xhr.setRequestHeader('content-type', 'application/json');
         xhr.onload = function () {
+          try {
             let entries = JSON.parse(xhr.responseText).data.home.home_timeline_urt.instructions[0].entries;
             for (let i = 0; i < entries.length; i++) {
                 if (!entries[i].entryId.includes("promoted") && !entries[i].entryId.includes("cursor")) {
@@ -1157,6 +1158,9 @@ function get_tweets3(d) {
                     break;
                 }
             }
+          } catch (e) {
+            console.log(e);
+          }
         }
         xhr.send(JSON.stringify(d));
     } catch (e) {

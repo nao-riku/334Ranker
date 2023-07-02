@@ -562,10 +562,12 @@ def receive(dict, driver):
 def interval(since, until, end, index, driver):
     while True:
         if until < datetime.datetime.now():
-            if index % 60 == 0 and (end - until).total_seconds() > 1:
-                add = 2
+            if (end - until).total_seconds() <= 6:
+                add = (end - until).total_seconds()
+            elif index % 60 == 0:
+                add = 6
             else:
-                add = 1
+                add = 5
             if until < end:
                 threading.Thread(target=interval, args=(until, until + datetime.timedelta(seconds = add), end, index + 1, driver,)).start()
             since2 = since - datetime.timedelta(seconds = 1)
@@ -591,14 +593,18 @@ xhr.setRequestHeader('x-twitter-client-language', 'ja');
 xhr.withCredentials = true;
 
 xhr.onload = function () {
-    callback(xhr.responseText);
+    out = JSON.parse(xhr.responseText);
+    out2 = [];
+    for(var i = 0; i < out.statuses.length; i++) {
+        out2.push({"status": {"data": out.statuses[i]}})
+    }
+    callback(out2);
 }
 
 xhr.send();
-            """, index % 10)
-            out = json.loads(res)["modules"]
-            if out != []:
-                receive(out, driver)
+            """)
+            if res != []:
+                receive(res, driver)
             if datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 36, 0) < until and load_res_yet:
                 get_allresult()
             break
@@ -1251,7 +1257,7 @@ def start():
                 end_time = times[i][0]
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
-            threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=1), end_time, 0, driver,)).start()
+            threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):

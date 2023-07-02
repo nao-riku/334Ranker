@@ -1099,7 +1099,7 @@ function get_tweets2(max_id) {
                 if ('statuses' in res) {
                     res = res.statuses;
                     if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
-                        out = out.concat(out2)
+                        out = out.concat(out2);
                         get_tweets3(data);
                     } else {
                         if (max_id !== undefined) res.shift();
@@ -1160,6 +1160,7 @@ function get_tweets3(d) {
             }
           } catch (e) {
             console.log(e);
+            final();
           }
         }
         xhr.send(JSON.stringify(d));

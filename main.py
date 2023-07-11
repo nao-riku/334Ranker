@@ -55,7 +55,7 @@ def get_allresult():
         print("loaded json")
 
 
-def tweet(driver):
+def tweet(driver, account, password, tel):
     global post_body, post_url
     for _ in range(5):
         try:
@@ -63,12 +63,15 @@ def tweet(driver):
             try:
                 element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
             except:
-                element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='/login']")))
-                time.sleep(1)
-                driver.find_element(By.CSS_SELECTOR, "[href='/login']").click()
-                time.sleep(20)
-                driver.get('https://twitter.com/Rank334/status/1626108351364100098')
-                element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
+                try:
+                    element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='/login']")))
+                    time.sleep(1)
+                    driver.find_element(By.CSS_SELECTOR, "[href='/login']").click()
+                    time.sleep(20)
+                    driver.get('https://twitter.com/Rank334/status/1626108351364100098')
+                    element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
+                except:
+                    login_twitter(account, password, tel, driver)
             time.sleep(1)
 
             element_box = driver.find_element(By.CSS_SELECTOR, "[role=textbox]")
@@ -215,7 +218,7 @@ def login_twitter(account, password, tel, driver):
                     break
                 time.sleep(0.5)
                 
-            tweet(driver)
+            tweet(driver, account, password, tel)
         
         except Exception as e:
             traceback.print_exc()

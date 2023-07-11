@@ -72,7 +72,7 @@ def tweet(driver, account, password, tel):
                     element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
                 except:
                     login_twitter(account, password, tel, driver)
-			        break
+                    break
             time.sleep(1)
 
             element_box = driver.find_element(By.CSS_SELECTOR, "[role=textbox]")

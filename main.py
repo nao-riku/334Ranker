@@ -1378,7 +1378,7 @@ def start():
             
             get_allresult()
             if len(sys.argv) != 1:
-                start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=2)
+                start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=60)
                 end_time = times[i][0]
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)

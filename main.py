@@ -673,6 +673,7 @@ def receive(dict, driver):
 def interval(since, until, end, index, driver):
     while True:
         if until < datetime.datetime.now():
+            print(datetime.datetime.now(), index)
             if (end - until).total_seconds() <= 6:
                 add = (end - until).total_seconds()
             elif datetime.datetime(until.year, until.month, until.day, 3, 28, 0) < datetime.datetime.now() < datetime.datetime(until.year, until.month, until.day, 3, 34, 2):
@@ -725,6 +726,7 @@ xhr.send();
                 receive(res, driver)
             if datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 36, 0) < until and load_res_yet:
                 get_allresult()
+            print(datetime.datetime.now(), index)
             break
         time.sleep(0.01)
 

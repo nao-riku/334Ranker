@@ -543,7 +543,7 @@ xhr.send();
         res = driver.execute_script("return window.following[" + str(id) + "]")
         if res != "":
             driver.execute_script("window.following[" + str(id) + "] = ''")
-            retrun res
+            return res
 
 
 def following(id, driver):
@@ -582,7 +582,7 @@ xhr.send();
         res = driver.execute_script("return window.followed[" + str(id) + "]")
         if res != "":
             driver.execute_script("window.followed[" + str(id) + "] = ''")
-            retrun res
+            return res
 
 
 def receive(dict, driver):

@@ -675,6 +675,8 @@ def interval(since, until, end, index, driver):
         if until < datetime.datetime.now():
             if (end - until).total_seconds() <= 6:
                 add = (end - until).total_seconds()
+            elif datetime.datetime(until.year, until.month, until.day, 3, 29, 0) < datetime.datetime.now() < datetime.datetime(until.year, until.month, until.day, 3, 34, 2):
+                add = 6
             elif index % 60 == 0:
                 add = 6
             else:

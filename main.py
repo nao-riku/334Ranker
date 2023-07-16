@@ -29,6 +29,8 @@ getuser_url = ""
 getuser_body = {}
 not_url = ""
 not_body = {}
+search_url = ""
+search_body = {}
 idlist = []
 driver3 = ""
 limit = 0
@@ -218,7 +220,35 @@ def login_twitter(account, password, tel, driver):
                 if not_body != {}:
                     break
                 time.sleep(0.5)
-                
+            
+            driver.get('https://twitter.com/search?q=334&src=typed_query&f=live')
+            time.sleep(20)
+            
+            for _ in range(5):
+                for request in driver.requests:
+                    if request.response:
+                        if "SearchTimeline" in request.url and "graphql" in request.url:
+                            if request.body != b'':
+                                search_body2 = json.loads(request.body)
+                                time.sleep(0.5)
+                                if "variables" in search_body2:
+                                    search_body = search_body2
+                                    print("set search_body")
+                                    break
+                            else:
+                                search_body2 = request.params
+                                time.sleep(0.5)
+                                if "variables" in search_body2:
+                                    search_body = search_body2
+                                    for key in search_body:
+                                    	search_body[key] = json.loads(search_body[key])
+                                    print("set search_body")
+                                    break
+                if search_body != {}:
+                    break
+                time.sleep(0.5)
+
+            
             tweet(driver, account, password, tel)
         
         except Exception as e:

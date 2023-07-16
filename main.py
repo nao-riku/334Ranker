@@ -165,8 +165,8 @@ def login_twitter(account, password, tel, driver):
                                 time.sleep(0.5)
                                 if "variables" in timeline_body2:
                                     timeline_body = timeline_body2
-                                    timeline_body["variables"] = json.loads(timeline_body["variables"])
-                                    timeline_body["features"] = json.loads(timeline_body["features"])
+                                    for key in timeline_body:
+                                    	timeline_body[key] = json.loads(timeline_body[key])
                                     print("set timeline_body")
                                     break
                 if timeline_body != {}:
@@ -193,8 +193,8 @@ def login_twitter(account, password, tel, driver):
                                 time.sleep(0.5)
                                 if "variables" in getuser_body2:
                                     getuser_body = getuser_body2
-                                    getuser_body["variables"] = json.loads(getuser_body["variables"])
-                                    getuser_body["features"] = json.loads(getuser_body["features"])
+                                    for key in getuser_body:
+                                    	getuser_body[key] = json.loads(getuser_body[key])
                                     print("set getuser_body")
                                     break
                 if getuser_body != {}:
@@ -500,6 +500,7 @@ def TimeToStr(d):
 def get_followed(id, driver):
     driver.execute_script("""
 if (window.followed === undefined) window.followed = {};
+var id = arguments[2];
 window.followed[id] = "";
 var data = arguments[0];
 var url = arguments[1].split("?")[0];
@@ -509,7 +510,6 @@ cookie.forEach(function (value) {
     let content = value.split('=');
     if (content[0] == "ct0") token = content[1];
 })
-var id = arguments[2];
 data.variables.userId = id;
 let param = "?" + Object.entries(data).map((e) => { return `${e[0].replaceAll("%22", "")}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&");
 var xhr = new XMLHttpRequest();
@@ -540,17 +540,17 @@ xhr.send();
     """, getuser_body, getuser_url, id)
     while True:
         time.sleep(0.01)
-        res = driver.execute_script("return window.following[" + str(id) + "]")
+        res = driver.execute_script("return window.followed['" + id + "']")
         if res != "":
-            driver.execute_script("window.following[" + str(id) + "] = ''")
+            driver.execute_script("window.followed['" + id + "'] = ''")
             return res
 
 
 def following(id, driver):
     driver.execute_script("""
 if (window.following === undefined) window.following = {};
-window.following[id] = "";
 var id = arguments[0];
+window.following[id] = "";
 var url = "https://api.twitter.com/1.1/friendships/create_all.json?user_id=" + id;
     
 var cookie = document.cookie.replaceAll(" ", "").split(";");
@@ -579,9 +579,9 @@ xhr.send();
 """, id)
     while True:
         time.sleep(0.01)
-        res = driver.execute_script("return window.followed[" + str(id) + "]")
+        res = driver.execute_script("return window.following['" + id + "']")
         if res != "":
-            driver.execute_script("window.followed[" + str(id) + "] = ''")
+            driver.execute_script("window.following['" + id + "'] = ''")
             return res
 
 

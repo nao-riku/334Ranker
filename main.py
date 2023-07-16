@@ -675,9 +675,9 @@ def interval(since, until, end, index, driver):
         if until < datetime.datetime.now():
             if (end - until).total_seconds() <= 6:
                 add = (end - until).total_seconds()
-            elif datetime.datetime(until.year, until.month, until.day, 3, 29, 0) < datetime.datetime.now() < datetime.datetime(until.year, until.month, until.day, 3, 34, 2):
+            elif datetime.datetime(until.year, until.month, until.day, 3, 28, 0) < datetime.datetime.now() < datetime.datetime(until.year, until.month, until.day, 3, 34, 2):
                 add = 6
-            elif index % 60 == 0:
+            elif index % 30 == 0:
                 add = 6
             else:
                 add = 5
@@ -705,13 +705,18 @@ xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
 xhr.setRequestHeader('x-twitter-client-language', 'ja');
 xhr.withCredentials = true;
 
-xhr.onload = function () {
-    out = JSON.parse(xhr.responseText);
-    out2 = [];
-    for(var i = 0; i < out.statuses.length; i++) {
-        out2.push({"status": {"data": out.statuses[i]}})
+xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+        if (xhr.status == 200) {
+            out = JSON.parse(xhr.responseText);
+            out2 = [];
+            for(var i = 0; i < out.statuses.length; i++) {
+                out2.push({"status": {"data": out.statuses[i]}})
+            }
+            callback(out2);
+        }
+        else callback([]);
     }
-    callback(out2);
 }
 
 xhr.send();

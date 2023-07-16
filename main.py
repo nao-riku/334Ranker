@@ -497,6 +497,93 @@ def TimeToStr(d):
     return stringTime
 
 
+def get_followed(id, driver):
+    driver.execute_script("""
+if (window.followed === undefined) window.followed = {};
+window.followed[id] = "";
+var data = arguments[0];
+var url = arguments[1].split("?")[0];
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+var id = arguments[2];
+data.variables.userId = id;
+let param = "?" + Object.entries(data).map((e) => { return `${e[0].replaceAll("%22", "")}=${encodeURIComponent(JSON.stringify(e[1]))}` }).join("&");
+var xhr = new XMLHttpRequest();
+xhr.open('GET', url + param);
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+xhr.setRequestHeader('x-csrf-token', token);
+xhr.setRequestHeader('x-twitter-active-user', 'yes');
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+xhr.setRequestHeader('x-twitter-client-language', 'ja');
+xhr.withCredentials = true;
+xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+        if (xhr.status == 200) {
+            try {
+                out = JSON.parse(xhr.responseText);
+                if ("followed_by" in out.data.user.result.legacy) {
+                    if (out.data.user.result.legacy.followed_by) window.followed[id] = 1;
+                    else window.followed[id] = 2;
+                } else window.followed[id] = 2;
+            } catch (e) {
+                console.log(e);
+                window.followed[id] = 3;
+            }
+        } else window.followed[id] = 3;
+    }
+}
+xhr.send();
+    """, getuser_body, getuser_url, id)
+    while True:
+        time.sleep(0.01)
+        res = driver.execute_script("return window.following[" + str(id) + "]")
+        if res != "":
+            driver.execute_script("window.following[" + str(id) + "] = ''")
+            retrun res
+
+
+def following(id, driver):
+    driver.execute_script("""
+if (window.following === undefined) window.following = {};
+window.following[id] = "";
+var id = arguments[0];
+var url = "https://api.twitter.com/1.1/friendships/create_all.json?user_id=" + id;
+    
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+
+var xhr = new XMLHttpRequest();
+xhr.open('POST', url);
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+xhr.setRequestHeader('x-csrf-token', token);
+xhr.setRequestHeader('x-twitter-active-user', 'yes');
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+xhr.setRequestHeader('x-twitter-client-language', 'ja');
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.withCredentials = true;
+xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+        if (xhr.status == 200) window.following[id] = true;
+        else window.followed[id] = false;
+    }
+}
+xhr.send();
+""", id)
+    while True:
+        time.sleep(0.01)
+        res = driver.execute_script("return window.followed[" + str(id) + "]")
+        if res != "":
+            driver.execute_script("window.followed[" + str(id) + "] = ''")
+            retrun res
+
 
 def receive(dict, driver):
     global idlist, limit
@@ -509,12 +596,32 @@ def receive(dict, driver):
             rep_text = False
             if item["status"]["data"]["in_reply_to_status_id_str"] == None:
                 user_id = item["status"]["data"]["user"]["id_str"]
-                user_name = item["status"]["data"]["user"]["name"]
-                if user_name == "":
-                    user_name = "@" + item["status"]["data"]["user"]["screen_name"]
-                rep_text = has_rank(user_id, user_name, item)
-                if rep_text == False or rep_text == True:
-                    rep_text = get_result(user_id, user_name)
+                text = item["status"]["data"]["full_text"].lower()
+                mentions = item["status"]["data"]["entities"]["user_mentions"]
+                for user in mentions:
+                    text = text.replace("@" + user["screen_name"].lower(), "")
+                if "ふぉろー" in text or "フォロー" in text or "follow" in text:
+                    if item["status"]["data"]["user"]["following"] == True:
+                        rep_text = "既にフォローしています"
+                    else:
+                        followed = get_followed(user_id, driver)
+                        if followed == 1:
+                            follow = following(user_id, driver)
+                            if follow == True:
+                                rep_text = "フォローしました"
+                            else:
+                                rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
+                        elif followed == 2:
+                            rep_text = "まずは334Rankerをフォローしてください"
+                        else:
+                            rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
+                else:
+                    user_name = item["status"]["data"]["user"]["name"]
+                    if user_name == "":
+                        user_name = "@" + item["status"]["data"]["user"]["screen_name"]
+                    rep_text = has_rank(user_id, user_name, item)
+                    if rep_text == False or rep_text == True:
+                        rep_text = get_result(user_id, user_name)
             else:
                 if item["status"]["data"]["in_reply_to_user_id_str"] == ranker_id or item["status"]["data"]["in_reply_to_user_id_str"] == ranker_id_2:
                     user_id = item["status"]["data"]["user"]["id_str"]

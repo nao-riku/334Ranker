@@ -1171,6 +1171,7 @@ var url2 = '.json?count=100&result_type=recent&q=334 since:""" + time1.strftime(
 var out = [];
 var out2 = [];
 var out3 = [];
+var out4 = [];
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
 cookie.forEach(function (value) {
@@ -1204,8 +1205,13 @@ function get_queryid(name, defaultId) {
 var data = arguments[0];
 data.variables["cursor"] = "";
 data.variables.seenTweetIds = [];
-let queryid = get_queryid("HomeLatestTimeline", "VyGvysk4GUAl_et492Gs1Q");
+let queryid = get_queryid("HomeLatestTimeline", "02vsYHq98uLTwnNu2VF0Lg");
 data.queryId = queryid;
+var data2 = arguments[1];
+data2.variables["cursor"] = "";
+data2.variables["rawQuery"] = "334 since:""" + time1.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + time2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """"
+let queryid2 = get_queryid("SearchTimeline", "KUnA_SzQ4DMxcwWuYZh9qg");
+data2.queryId = queryid2;
 get_tweets();
 function setheader(xhr) {
     xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
@@ -1299,7 +1305,7 @@ function get_tweets3(d) {
                             if (entries[i].entryId.includes("home")) continue;
                             else {
                                 out = out.concat(out3);
-                                final();
+                                get_tweets4(data2);
                                 break;
                             }
                         }
@@ -1325,6 +1331,62 @@ function get_tweets3(d) {
           } catch (e) {
             console.log(e);
             out = out.concat(out3);
+            get_tweets4(data2);
+          }
+        }
+        xhr.send(JSON.stringify(d));
+    } catch (e) {
+        console.log(e);
+        get_tweets4(data2);
+    }
+}
+function get_tweets4(d) {
+    try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.twitter.com/graphql/' + queryid + '/SearchTimeline');
+        setheader(xhr);
+        xhr.setRequestHeader('content-type', 'application/json');
+        xhr.onload = function () {
+          try {
+            let instructions = JSON.parse(xhr.responseText).data.search_by_raw_query.search_timeline.timeline.instructions;
+            for (let j = 0; j < instructions.length; j++) {
+                let entries = instructions[j];
+                for (let i = 0; i < entries.length; i++) {
+                    if (!entries[i].entryId.includes("promoted") && !entries[i].entryId.includes("cursor")) {
+                        try {
+                            var res = entries[i].content.itemContent.tweet_results.result;
+                            let legacy = res.legacy;
+                            if (new Date(legacy.created_at) < time1) {
+                                if (entries[i].entryId.includes("home")) continue;
+                                else {
+                                    out = out.concat(out4);
+                                    final();
+                                    break;
+                                }
+                            }
+                            legacy["text"] = legacy.full_text;
+                            if (legacy.text != "334") continue;
+                            legacy["source"] = res.source;
+                            legacy["index"] = parseInt(BigInt(legacy.id_str).toString(2).slice(0, -22), 2) + 1288834974657;
+                            legacy["user"] = res.core.user_results.result.legacy;
+                            legacy.user["id_str"] = legacy.user_id_str;
+                            out4.push(legacy);
+                            continue;
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }
+                    if (entries[i].entryId.includes("bottom")) {
+                        let data2 = Object.assign({}, data);
+                        data2.variables.cursor = entries[i].content.value;
+                        get_tweets4(data2);
+                        break;
+                    }
+                }
+            }
+          } catch (e) {
+            console.log(e);
+            out = out.concat(out4);
             final();
           }
         }
@@ -1335,18 +1397,18 @@ function get_tweets3(d) {
     }
 }
 function final() {
-    let out4 = []
+    let out5 = []
     let ids = [];
     out.sort((a, b) => a.index - b.index);
     for (let i = 0; i < out.length; i++) {
         if (!ids.includes(out[i].id_str)) {
-            out4.push(out[i]);
+            out5.push(out[i]);
             ids.push(out[i].id_str);
         }
     }
-    window.data = out4;
+    window.data = out5;
 }
-            """, timeline_body)
+            """, timeline_body, search_body)
             while True:
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")

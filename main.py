@@ -600,7 +600,7 @@ def receive(dict, driver):
                 mentions = item["status"]["data"]["entities"]["user_mentions"]
                 for user in mentions:
                     text = text.replace("@" + user["screen_name"].lower(), "")
-                if "ふぉろー" in text or "フォロー" in text or "follow" in text:
+                if "ふぉろー" in text or "フォロー" in text or "follow" in text or "ふぉろば" in text or "フォロバ" in text:
                     if item["status"]["data"]["user"]["following"] == True:
                         rep_text = "既にフォローしています"
                     else:

@@ -29,7 +29,6 @@ getuser_url = ""
 getuser_body = {}
 not_url = ""
 not_body = {}
-search_url = ""
 search_body = {}
 idlist = []
 driver3 = ""

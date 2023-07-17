@@ -1461,7 +1461,7 @@ function final(out6) {
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")
                 if res != "":
-                    print("get334 conplete")
+                    print("get334 conplete: ")
                     print(datetime.datetime.now())
                     make_ranking(res, driver)
                     break

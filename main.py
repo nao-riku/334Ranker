@@ -60,7 +60,7 @@ def tweet(driver, account, password, tel):
     global post_body, post_url
     for _ in range(5):
         try:
-            driver.get('https://twitter.com/Rank334/status/1626108351364100098')
+            driver.get('https://twitter.com/Rank334/status/1680953311317590016')
             try:
                 element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
             except:
@@ -69,7 +69,7 @@ def tweet(driver, account, password, tel):
                     time.sleep(1)
                     driver.find_element(By.CSS_SELECTOR, "[href='/login']").click()
                     time.sleep(20)
-                    driver.get('https://twitter.com/Rank334/status/1626108351364100098')
+                    driver.get('https://twitter.com/Rank334/status/1680953311317590016')
                     element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
                 except:
                     login_twitter(account, password, tel, driver)
@@ -77,7 +77,7 @@ def tweet(driver, account, password, tel):
             time.sleep(1)
 
             element_box = driver.find_element(By.CSS_SELECTOR, "[role=textbox]")
-            element_box.send_keys("a")
+            element_box.send_keys("詳しくは固定ツイートをご覧ください")
             time.sleep(2) 
             
             driver.find_element(By.CSS_SELECTOR, "[data-testid=tweetButtonInline]").click()
@@ -317,7 +317,7 @@ def login_twitter2(account, password, tel, driver):
             time.sleep(1)
 
             element_box = driver3.find_element(By.CSS_SELECTOR, "[role=textbox]")
-            element_box.send_keys("a")
+            element_box.send_keys("Ranker稼働中")
             time.sleep(2) 
             
             driver3.find_element(By.CSS_SELECTOR, "[data-testid=tweetButtonInline]").click()

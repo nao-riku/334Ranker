@@ -1222,7 +1222,12 @@ var data2 = arguments[1];
 data2.variables["cursor"] = "";
 data2.variables["rawQuery"] = "334 -filter:retweets -filter:quote -from:rank334 -from:rank334_2 since:""" + time1.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + time2.strftime('%Y-%m-%d_%H:%M:%S_JST') + """"
 let queryid2 = get_queryid("SearchTimeline", "KUnA_SzQ4DMxcwWuYZh9qg");
-get_tweets();
+var count = 0;
+//get_tweets();
+get_tweets2();
+get_tweets3(data);
+get_tweets4(data2);
+
 
 function setheader(xhr) {
     xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
@@ -1244,7 +1249,7 @@ function get_tweets(max_id) {
             if (xhr.status === 200) {
                 try {
                     res = JSON.parse(xhr.responseText).modules;
-                    if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) get_tweets2();
+                    if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) final([]);
                     else {
                         if (max_id !== undefined) res.shift();
                         for (let i = 0; i < res.length; i++) {
@@ -1256,9 +1261,9 @@ function get_tweets(max_id) {
                     }
                 } catch (e) {
                     console.error(e);
-                    get_tweets2();
+                    final([]);
                 }
-            } else get_tweets2();
+            } else final([]);
         }
     }
 }
@@ -1276,10 +1281,8 @@ function get_tweets2(max_id) {
                     res = JSON.parse(xhr.responseText);
                     if ('statuses' in res) {
                         res = res.statuses;
-                        if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) {
-                            out = out.concat(out2);
-                            get_tweets3(data);
-                        } else {
+                        if (res.length <= 0 || (max_id !== undefined && res.length <= 1)) final(out2);
+                        else {
                             if (max_id !== undefined) res.shift();
                             for (let i = 0; i < res.length; i++) {
                                 let tweet = res[i];
@@ -1288,13 +1291,12 @@ function get_tweets2(max_id) {
                             }
                             get_tweets2(out2[out2.length - 1].id_str);
                         }
-                    } else get_tweets3(data);
+                    } else final(out2);
                 } catch (e) {
                     console.error(e);
-                    out = out.concat(out2);
-                    get_tweets3(data);
+                    final(out2);
                 }
-            } else get_tweets3(data);
+            } else final(out2);
         }
     }
 }
@@ -1321,9 +1323,8 @@ function get_tweets3(d) {
                                     if (new Date(legacy.created_at) < time1) {
                                         if (entries[i].entryId.includes("home")) continue;
                                         else {
-                                            out = out.concat(out3);
                                             flag = false;
-                                            get_tweets4(data2);
+                                            final(out3);
                                             break;
                                         }
                                     }
@@ -1343,26 +1344,22 @@ function get_tweets3(d) {
                                 let data3 = Object.assign({}, data);
                                 data3.variables.cursor = entries[i].content.value;
                                 flag = false;
-                                get_tweets3(data3);
+                                get_tweets3(data);
                                 break;
                             }
                         }
-                        if (flag) {
-                            out = out.concat(out3);
-                            get_tweets4(data2);
-                        }
+                        if (flag) final(out3);
                     } catch (e) {
                         console.error(e);
-                        out = out.concat(out3);
-                        get_tweets4(data2);
+                        final(out3);
                     }
-                } else get_tweets4(data2);
+                } else final(out3);
             }
         }
         xhr.send(JSON.stringify(d));
     } catch (e) {
         console.error(e);
-        get_tweets4(data2);
+        final(out3);
     }
 }
 
@@ -1396,9 +1393,8 @@ function get_tweets4(d) {
                                         if (new Date(legacy.created_at) < time1) {
                                             if (entries[i].entryId.includes("home")) continue;
                                             else {
-                                                out = out.concat(out4);
                                                 flag = false;
-                                                final();
+                                                final(out4);
                                                 break loop;
                                             }
                                         }
@@ -1418,34 +1414,31 @@ function get_tweets4(d) {
                                     let data3 = Object.assign({}, data2);
                                     data3.variables.cursor = entries[i].content.value;
                                     flag = false;
-                                    if (flag2) {
-                                        out = out.concat(out4);
-                                        final();
-                                    } else get_tweets4(data3);
+                                    if (flag2) final(out4);
+                                    else get_tweets4(data3);
                                     break loop;
                                 }
                             }
                         }
-                        if (flag) {
-                            out = out.concat(out4);
-                            final();
-                        }
+                        if (flag) final(out4);
                     } catch (e) {
                         console.error(e);
-                        out = out.concat(out4);
-                        final();
+                        final(out4);
                     }
-                } else final();
+                } else final(out4);
             }
         }
         xhr.send();
     } catch (e) {
         console.error(e);
-        final();
+        final(out4);
     }
 }
 
-function final() {
+function final(out6) {
+    out = out.concat(out6);
+    count++;
+    if (count < 3) return;
     let out5 = []
     let ids = [];
     out.sort((a, b) => a.index - b.index);

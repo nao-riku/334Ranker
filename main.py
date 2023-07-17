@@ -1347,7 +1347,10 @@ function get_tweets3(d) {
                                 break;
                             }
                         }
-                        if (flag) get_tweets4(data2);
+                        if (flag) {
+                            out = out.concat(out3);
+                            get_tweets4(data2);
+                        }
                     } catch (e) {
                         console.error(e);
                         out = out.concat(out3);
@@ -1378,6 +1381,7 @@ function get_tweets4(d) {
                     try {
                         var flag = true;
                         let instructions = JSON.parse(xhr.responseText).data.search_by_raw_query.search_timeline.timeline.instructions;
+                        var flag2 = true;
                         loop: for (let j = 0; j < instructions.length; j++) {
                             if ("entries" in instructions[j]) var entries = instructions[j].entries;
                             else if ("entry" in instructions[j]) var entries = [instructions[j].entry];
@@ -1385,6 +1389,7 @@ function get_tweets4(d) {
                             for (let i = 0; i < entries.length; i++) {
                                 if (!entries[i].entryId.includes("promoted") && !entries[i].entryId.includes("cursor")) {
                                     try {
+                                        flag2 = false;
                                         var res = entries[i].content.itemContent.tweet_results.result;
                                         if ("tweet" in res) res = res.tweet;
                                         let legacy = res.legacy;
@@ -1413,12 +1418,18 @@ function get_tweets4(d) {
                                     let data3 = Object.assign({}, data2);
                                     data3.variables.cursor = entries[i].content.value;
                                     flag = false;
-                                    get_tweets4(data3);
+                                    if (flag2) {
+                                        out = out.concat(out4);
+                                        final();
+                                    } else get_tweets4(data3);
                                     break loop;
                                 }
                             }
                         }
-                        if (flag) final();
+                        if (flag) {
+                            out = out.concat(out4);
+                            final();
+                        }
                     } catch (e) {
                         console.error(e);
                         out = out.concat(out4);

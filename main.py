@@ -1163,7 +1163,8 @@ def make_ranking(dict, driver):
                 ])
 
     print(str(dict2))
-    threading.Thread(target=browser, args=(str(dict2), driver,)).start()
+    print_log(driver)
+    #threading.Thread(target=browser, args=(str(dict2), driver,)).start()
 
     
 
@@ -1173,6 +1174,7 @@ def get_334(driver):
     get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
     while True:
         if get_time < datetime.datetime.now():
+            print(datetime.datetime.now())
             driver.execute_script("""
 window.data = "";
 var url1 = 'https://api.twitter.com/1.1/search/';
@@ -1459,6 +1461,7 @@ function final(out6) {
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")
                 if res != "":
+                    print(datetime.datetime.now())
                     make_ranking(res, driver)
                     break
             break
@@ -1518,16 +1521,16 @@ def start():
             start_time = times[i][0]
             end_time = times[i][1]
             
-            get_allresult()
+            #get_allresult()
             if len(sys.argv) != 1:
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=240)
                 end_time = times[i][0]
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
-            login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
-            threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
-            threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
+            #login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
+            #threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
+            #threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
-            if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
+            if True:#(len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
                 notice(driver)
                 get_334(driver)
                 

@@ -1173,6 +1173,7 @@ def get_334(driver):
     get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
     while True:
         if get_time < datetime.datetime.now():
+            print("get334 start: ")
             print(datetime.datetime.now())
             driver.execute_script("""
 window.data = "";
@@ -1460,6 +1461,7 @@ function final(out6) {
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")
                 if res != "":
+                    print("get334 conplete")
                     print(datetime.datetime.now())
                     make_ranking(res, driver)
                     break

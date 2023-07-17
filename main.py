@@ -636,7 +636,7 @@ def receive(dict, driver):
                     if item["status"]["data"]["user"]["following"] == True:
                         rep_text = "既にフォローしています"
                     else:
-                        print("フォロー : " + user_name + "  @" + user_id)
+                        print("フォロー : " + user_name + "  @" + item["status"]["data"]["user"]["screen_name"])
                         followed = get_followed(user_id, driver)
                         if followed == 1:
                             follow = following(user_id, driver)

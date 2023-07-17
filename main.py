@@ -1246,6 +1246,7 @@ function get_tweets(max_id) {
     xhr.send();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
+            console.error("get1");
             if (xhr.status === 200) {
                 try {
                     res = JSON.parse(xhr.responseText).modules;
@@ -1276,6 +1277,7 @@ function get_tweets2(max_id) {
     xhr.send();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
+            console.error("get2");
             if (xhr.status === 200) {
                 try {
                     res = JSON.parse(xhr.responseText);
@@ -1309,6 +1311,7 @@ function get_tweets3(d) {
         xhr.setRequestHeader('content-type', 'application/json');
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
+                console.error("get3");
                 if (xhr.status === 200) {
                     try {
                         var flag = true;
@@ -1320,7 +1323,7 @@ function get_tweets3(d) {
                                     else var res = entries[i].content.itemContent.tweet_results.result;
                                     if ("tweet" in res) res = res.tweet;
                                     let legacy = res.legacy;
-                                    if (new Date(legacy.created_at) < time1) {
+                                    if (new Date(legacy.created_at) < new Date()) {
                                         if (entries[i].entryId.includes("home")) continue;
                                         else {
                                             flag = false;
@@ -1374,6 +1377,7 @@ function get_tweets4(d) {
         xhr.setRequestHeader('content-type', 'application/json');
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
+                console.error("get4");
                 if (xhr.status === 200) {
                     try {
                         var flag = true;

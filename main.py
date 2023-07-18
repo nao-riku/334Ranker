@@ -1351,7 +1351,7 @@ function get_tweets3(d) {
                                 let data3 = Object.assign({}, data);
                                 data3.variables.cursor = entries[i].content.value;
                                 flag = false;
-                                get_tweets3(data);
+                                get_tweets3(data3);
                                 break;
                             }
                         }

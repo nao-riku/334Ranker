@@ -32,6 +32,7 @@ not_body = {}
 search_body = {}
 idlist = []
 driver3 = ""
+driver4 = ""
 limit = 0
 
 start_now = datetime.datetime.now()
@@ -1109,8 +1110,8 @@ def browser(tweets, driver2):
             options.add_argument("--disable-extensions")
             options.add_argument("--disable-gpu")
             options.add_argument('--disable-dev-shm-usage')
-            driver = webdriver.Chrome(options = options)
-            driver.set_window_size(620, 1)
+            driver4 = webdriver.Chrome(options = options)
+            driver4.set_window_size(620, 1)
             
         except Exception as e:
             traceback.print_exc()
@@ -1120,25 +1121,25 @@ def browser(tweets, driver2):
     
     for _ in range(5):
         try:
-            driver.get(os.environ['HTML_URL'])
-            wait = WebDriverWait(driver, 10).until(EC.alert_is_present())
-            Alert(driver).accept()
-            driver.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
-            wait2 = WebDriverWait(driver, 180).until(EC.alert_is_present())
+            driver4.get(os.environ['HTML_URL'])
+            wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
+            Alert(driver4).accept()
+            driver4.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
+            wait2 = WebDriverWait(driver4, 180).until(EC.alert_is_present())
         except Exception as e:
             traceback.print_exc()
             time.sleep(1)
         else:
-            Alert(driver).accept()
-            bin = driver.execute_script('return window.res')
+            Alert(driver4).accept()
+            bin = driver4.execute_script('return window.res')
             postrank(bin, driver2, "Today's top 30")
-            wait3 = WebDriverWait(driver, 180).until(EC.alert_is_present())
-            Alert(driver).accept()
+            wait3 = WebDriverWait(driver4, 180).until(EC.alert_is_present())
+            Alert(driver4).accept()
             break
             
     dt = datetime.datetime.now()
     if dt.replace(day=calendar.monthrange(dt.year, dt.month)[1]).day == dt.day:
-        browser2(driver, driver2)
+        browser2(driver4, driver2)
         
 
 
@@ -1481,7 +1482,7 @@ function final(out6) {
 
 
 def notice(driver):
-    global today_result, world_rank, load_res_yet
+    global today_result, world_rank, load_res_yet, driver4
     notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
     while True:
         if notice_time < datetime.datetime.now():
@@ -1493,6 +1494,24 @@ def notice(driver):
             req["variables"]["tweet_text"] = "334観測中 (" + datetime.datetime.now().date().strftime('%Y/%m/%d') + ")"
             del req["variables"]['reply']
             threading.Thread(target=reply, args=(req, driver,)).start()
+
+            for _ in range(10):
+                try:
+                    options=Options()
+                    #options.add_argument('--headless')
+                    options.add_argument('--no-sandbox')
+                    options.add_argument("--disable-extensions")
+                    options.add_argument("--disable-gpu")
+                    options.add_argument('--disable-dev-shm-usage')
+                    driver4 = webdriver.Chrome(options = options)
+                    driver4.set_window_size(620, 1)
+            
+                except Exception as e:
+                    traceback.print_exc()
+                    time.sleep(2)
+                else:
+                    break
+    
             break
         time.sleep(5)
 

@@ -762,9 +762,10 @@ xhr.send();
 def print_log(driver):
     logs = driver.get_log('browser')
     for log in logs:
-        print(datetime.datetime.fromtimestamp(log['timestamp'] / 1000))
-        print(log)
-        print()
+        if "Please make sure it has an appropriate" not in log["message"]:
+            print(datetime.datetime.fromtimestamp(log['timestamp'] / 1000))
+            print(log)
+            print()
 
 
 def interval2(since, end, driver):

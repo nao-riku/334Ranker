@@ -1101,14 +1101,22 @@ promise.then((e) => window.data = data2);
 
 
 def browser(tweets, driver2):
-    options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-extensions')
-    options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome(options=options)
-    driver.set_window_size(620, 1)
+    for _ in range(10):
+        try:
+            options=Options()
+            options.add_argument('--headless')
+            options.add_argument('--no-sandbox')
+            options.add_argument("--disable-extensions")
+            options.add_argument("--disable-gpu")
+            options.add_argument('--disable-dev-shm-usage')
+            driver = webdriver.Chrome(options = options)
+            driver.set_window_size(620, 1)
+            
+        except Exception as e:
+            traceback.print_exc()
+            time.sleep(2)
+        else:
+            break
     
     for _ in range(5):
         try:
@@ -1492,7 +1500,7 @@ def notice(driver):
 
 def start():
     global start_now, start_time, end_time, driver3
-    for _ in range(3):
+    for _ in range(10):
         try:
             options=Options()
             #options.add_argument('--headless')

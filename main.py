@@ -762,10 +762,11 @@ xhr.send();
 def print_log(driver):
     logs = driver.get_log('browser')
     for log in logs:
-        if "Please make sure it has an appropriate" not in log["message"]:
-            print(datetime.datetime.fromtimestamp(log['timestamp'] / 1000))
-            print(log)
-            print()
+        if "message" in log and "timestamp" in log:
+            if "Please make sure it has an appropriate" not in log["message"] and "keyregistry" not in log["message"] and "live_pipeline" not in log["message"]:
+                print(datetime.datetime.fromtimestamp(log['timestamp'] / 1000))
+                print(log)
+                print()
 
 
 def interval2(since, end, driver):

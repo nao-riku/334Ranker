@@ -1023,6 +1023,7 @@ function final(id) {
             req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
             req["variables"]["tweet_text"] = text
             del req["variables"]['reply']
+            print("post rank :")
             threading.Thread(target=reply, args=(req, driver,)).start()
             break
 
@@ -1102,16 +1103,18 @@ promise.then((e) => window.data = data2);
 
 
 def browser(tweets, driver2):
+    global driver4
     for _ in range(10):
         try:
-            options=Options()
-            options.add_argument('--headless')
-            options.add_argument('--no-sandbox')
-            options.add_argument("--disable-extensions")
-            options.add_argument("--disable-gpu")
-            options.add_argument('--disable-dev-shm-usage')
-            driver4 = webdriver.Chrome(options = options)
-            driver4.set_window_size(620, 1)
+            if driver4 == "":
+                options=Options()
+                #options.add_argument('--headless')
+                options.add_argument('--no-sandbox')
+                options.add_argument("--disable-extensions")
+                options.add_argument("--disable-gpu")
+                options.add_argument('--disable-dev-shm-usage')
+                driver4 = webdriver.Chrome(options = options)
+                driver4.set_window_size(620, 1)
             
         except Exception as e:
             traceback.print_exc()
@@ -1493,6 +1496,7 @@ def notice(driver):
             req = copy.deepcopy(post_body)
             req["variables"]["tweet_text"] = "334観測中 (" + datetime.datetime.now().date().strftime('%Y/%m/%d') + ")"
             del req["variables"]['reply']
+            print("notice tweet :")
             threading.Thread(target=reply, args=(req, driver,)).start()
 
             for _ in range(10):
@@ -1505,6 +1509,7 @@ def notice(driver):
                     options.add_argument('--disable-dev-shm-usage')
                     driver4 = webdriver.Chrome(options = options)
                     driver4.set_window_size(620, 1)
+                    print("set driver4")
             
                 except Exception as e:
                     traceback.print_exc()

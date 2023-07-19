@@ -882,7 +882,7 @@ return unsend;
         if out != []:
             threading.Thread(target=reply2, args=(out,)).start()
         else:
-            if end + datetime.timedelta(seconds=20) < datetime.datetime.now():
+            if endflag == False:
                 break
 
 

@@ -40,6 +40,8 @@ jobs:
  
 
       - name: Run Python
+        id: python
+        continue-on-error: true
         env:
           GAS_URL: ${{ secrets.GAS_URL }}
           HTML_URL: ${{ secrets.HTML_URL }}
@@ -48,3 +50,13 @@ jobs:
           TEL: ${{ secrets.TEL }}
           TZ: "Asia/Tokyo"
         run: python main.py
+
+      
+      - name: Error handling
+        if: ${{ steps.python.outcome == 'failure' }}
+        run: |
+          echo "Error handling"
+          curl -X POST https://api.github.com/repos/nao-riku/334Ranker/dispatches \
+               -H 'authorization: Bearer '${{ secrets.KEY }} \
+               --data '{"event_type": "Error handling"}'
+          exit 1

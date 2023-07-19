@@ -47,3 +47,13 @@ jobs:
           TEL: ${{ secrets.TEL }}
           TZ: "Asia/Tokyo"
         run: python main.py test
+
+      
+      - name: Error handling
+        if: ${{ steps.python.outcome == 'failure' }}
+        run: |
+          echo "Error handling"
+          curl -X POST https://api.github.com/repos/nao-riku/334Ranker/dispatches \
+               -H 'authorization: Bearer '${{ secrets.KEY }} \
+               --data '{"event_type": "Error handling"}'
+          exit 1

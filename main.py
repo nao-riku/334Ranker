@@ -951,6 +951,7 @@ xhr.send(JSON.stringify(data));
 
 
 def postrank(bin, driver, text):
+    global endflag
     print("start post")
     driver.execute_script("""
 window.data2 = "";
@@ -1144,7 +1145,7 @@ def browser(tweets, driver2):
             bin = driver4.execute_script('return window.res')
             print("get")
             postrank(bin, driver2, "Today's top 30")
-            wait3 = WebDriverWait(driver4, 180).until(EC.alert_is_present())
+            wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())
             Alert(driver4).accept()
             break
             

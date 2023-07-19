@@ -34,7 +34,6 @@ idlist = []
 driver3 = ""
 driver4 = ""
 limit = 0
-endflag = False
 
 start_now = datetime.datetime.now()
 start_time = ""
@@ -713,7 +712,7 @@ def interval(since, until, end, index, driver):
                 add = 6
             else:
                 add = 5
-            if endflag == False:
+            if until < end:
                 threading.Thread(target=interval, args=(until, until + datetime.timedelta(seconds = add), end, index + 1, driver,)).start()
             since2 = since - datetime.timedelta(seconds = 1)
             res = driver.execute_async_script("""
@@ -754,8 +753,7 @@ xhr.onreadystatechange = function () {
 xhr.send();
             """)
             if res != []:
-                #receive(res, driver)
-                pass
+                receive(res, driver)
             if datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 36, 0) < until and load_res_yet:
                 get_allresult()
             break
@@ -858,10 +856,9 @@ window.adaptive = [];
 return adaptive;
 """)
                 if out != []:
-                    #threading.Thread(target=receive, args=(out, driver,)).start()
-                    pass
+                    threading.Thread(target=receive, args=(out, driver,)).start()
                 else:
-                    if endflag == True:
+                    if end + datetime.timedelta(seconds=20) < datetime.datetime.now():
                         print_log(driver)
                         break
             break
@@ -882,7 +879,7 @@ return unsend;
         if out != []:
             threading.Thread(target=reply2, args=(out,)).start()
         else:
-            if endflag == False:
+            if end + datetime.timedelta(seconds=20) < datetime.datetime.now():
                 break
 
 
@@ -951,8 +948,7 @@ xhr.send(JSON.stringify(data));
 
 
 def postrank(bin, driver, text):
-    global endflag
-    print("start post")
+
     driver.execute_script("""
 window.data2 = "";
 var bin = atob(arguments[0]);
@@ -1024,13 +1020,11 @@ function final(id) {
         res = driver.execute_script("return window.data2")
         if res != "":
             req = copy.deepcopy(post_body)
-            #req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
-            req["variables"]["tweet_text"] = "this is test tweet"
+            req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
+            req["variables"]["tweet_text"] = text
             del req["variables"]['reply']
             print("post rank :")
-            #threading.Thread(target=reply, args=(req, driver,)).start()
-            time.sleep(20)
-            endflag = True
+            threading.Thread(target=reply, args=(req, driver,)).start()
             break
 
 
@@ -1133,17 +1127,14 @@ def browser(tweets, driver2):
             driver4.get(os.environ['HTML_URL'])
             wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
             Alert(driver4).accept()
-            print("ready")
             driver4.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
             wait2 = WebDriverWait(driver4, 180).until(EC.alert_is_present())
-            print("made")
         except Exception as e:
             traceback.print_exc()
             time.sleep(1)
         else:
             Alert(driver4).accept()
             bin = driver4.execute_script('return window.res')
-            print("get")
             postrank(bin, driver2, "Today's top 30")
             wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())
             Alert(driver4).accept()
@@ -1193,7 +1184,7 @@ def make_ranking(dict, driver):
 def get_334(driver):
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
     time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
-    get_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
+    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
     while True:
         if get_time < datetime.datetime.now():
             print("get334 start: ")
@@ -1217,8 +1208,6 @@ time1.setHours(3);
 time1.setMinutes(34);
 time1.setSeconds(0);
 time1.setMilliseconds(0);
-let time2 = new Date()
-time2.setMinutes(time2.getMinutes() - 15);
 
 function get_queryid(name, defaultId) {
     try {
@@ -1350,7 +1339,7 @@ function get_tweets3(d) {
                                     else var res = entries[i].content.itemContent.tweet_results.result;
                                     if ("tweet" in res) res = res.tweet;
                                     let legacy = res.legacy;
-                                    if (new Date(legacy.created_at) < time2) {
+                                    if (new Date(legacy.created_at) < time1) {
                                         if (entries[i].entryId.includes("home")) continue;
                                         else {
                                             flag = false;
@@ -1497,7 +1486,7 @@ function final(out6) {
 
 def notice(driver):
     global today_result, world_rank, load_res_yet, driver4
-    notice_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
+    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}
@@ -1505,10 +1494,10 @@ def notice(driver):
             load_res_yet = True
             
             req = copy.deepcopy(post_body)
-            req["variables"]["tweet_text"] = "this is test tweet"
+            req["variables"]["tweet_text"] = "334観測中 (" + datetime.datetime.now().date().strftime('%Y/%m/%d') + ")"
             del req["variables"]['reply']
             print("notice tweet :")
-            #threading.Thread(target=reply, args=(req, driver,)).start()
+            threading.Thread(target=reply, args=(req, driver,)).start()
 
             for _ in range(10):
                 try:
@@ -1576,7 +1565,7 @@ def start():
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
-            if True:#(len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
+            if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
                 notice(driver)
                 get_334(driver)
                 

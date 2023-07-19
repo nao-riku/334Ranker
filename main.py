@@ -1027,7 +1027,7 @@ function final(id) {
             req["variables"]["tweet_text"] = "this is test tweet"
             del req["variables"]['reply']
             print("post rank :")
-            threading.Thread(target=reply, args=(req, driver,)).start()
+            #threading.Thread(target=reply, args=(req, driver,)).start()
             time.sleep(20)
             endflag = True
             break

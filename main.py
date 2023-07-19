@@ -73,7 +73,8 @@ def tweet(driver, account, password, tel):
                     driver.get('https://twitter.com/Rank334/status/1680953311317590016')
                     element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
                 except:
-                    login_twitter(account, password, tel, driver)
+                    sys.exit(1)
+                    #login_twitter(account, password, tel, driver)
                     break
             time.sleep(1)
 
@@ -1571,4 +1572,4 @@ def start():
                 
             break
          
-threading.Thread(target=start).start()
+start()

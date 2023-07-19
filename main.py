@@ -951,7 +951,7 @@ xhr.send(JSON.stringify(data));
 
 
 def postrank(bin, driver, text):
-
+    print("start post")
     driver.execute_script("""
 window.data2 = "";
 var bin = atob(arguments[0]);
@@ -1132,14 +1132,17 @@ def browser(tweets, driver2):
             driver4.get(os.environ['HTML_URL'])
             wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
             Alert(driver4).accept()
+            print("ready")
             driver4.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
             wait2 = WebDriverWait(driver4, 180).until(EC.alert_is_present())
+            print("made")
         except Exception as e:
             traceback.print_exc()
             time.sleep(1)
         else:
             Alert(driver4).accept()
             bin = driver4.execute_script('return window.res')
+            print("get")
             postrank(bin, driver2, "Today's top 30")
             wait3 = WebDriverWait(driver4, 180).until(EC.alert_is_present())
             Alert(driver4).accept()
@@ -1504,7 +1507,7 @@ def notice(driver):
             req["variables"]["tweet_text"] = "this is test tweet"
             del req["variables"]['reply']
             print("notice tweet :")
-            threading.Thread(target=reply, args=(req, driver,)).start()
+            #threading.Thread(target=reply, args=(req, driver,)).start()
 
             for _ in range(10):
                 try:

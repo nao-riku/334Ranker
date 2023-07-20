@@ -660,9 +660,27 @@ def receive(dict, driver):
                     user_name = item["status"]["data"]["user"]["name"]
                     if user_name == "":
                         user_name = "@" + item["status"]["data"]["user"]["screen_name"]
-                    rep_text = has_rank(user_id, user_name, item)
-                    if rep_text == True:
-                        rep_text = "ランキングは準備中です\nしばらくお待ちください"
+                    text = item["status"]["data"]["full_text"].lower()
+                    if "フォロー" in text:
+                        if item["status"]["data"]["user"]["following"] == True:
+                            rep_text = "既にフォローしています"
+                        else:
+                            print("フォロー : " + user_name + "  @" + item["status"]["data"]["user"]["screen_name"])
+                            followed = get_followed(user_id, driver)
+                            if followed == 1:
+                                follow = following(user_id, driver)
+                                if follow == True:
+                                    rep_text = "フォローしました"
+                                else:
+                                    rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
+                            elif followed == 2:
+                                rep_text = "334Rankerをフォローしてからお試しください"
+                            else:
+                                rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
+                    else:
+                        rep_text = has_rank(user_id, user_name, item)
+                        if rep_text == True:
+                            rep_text = "ランキングは準備中です\nしばらくお待ちください"
                 else:
                     user_id = item["status"]["data"]["in_reply_to_user_id_str"]
                     user_name = ""

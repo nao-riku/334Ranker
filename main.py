@@ -625,6 +625,7 @@ def receive(dict, driver):
         
         if item["status"]["data"]["user"]["id_str"] != ranker_id and item["status"]["data"]["user"]["id_str"] != ranker_id_2:
             rep_text = False
+            follow_flag = False
             if item["status"]["data"]["in_reply_to_status_id_str"] == None:
                 user_id = item["status"]["data"]["user"]["id_str"]
                 text = item["status"]["data"]["full_text"].lower()
@@ -635,21 +636,24 @@ def receive(dict, driver):
                 if user_name == "":
                     user_name = "@" + item["status"]["data"]["user"]["screen_name"]
                 if "ふぉろー" in text or "フォロー" in text or "follow" in text or "ふぉろば" in text or "フォロバ" in text:
-                    if item["status"]["data"]["user"]["following"] == True:
-                        rep_text = "既にフォローしています"
-                    else:
-                        print("フォロー : " + user_name + "  @" + item["status"]["data"]["user"]["screen_name"])
-                        followed = get_followed(user_id, driver)
-                        if followed == 1:
-                            follow = following(user_id, driver)
-                            if follow == True:
-                                rep_text = "フォローしました"
+                    if item["status"]["data"]["id_str"] not in idlist:
+                        idlist.append(item["status"]["data"]["id_str"])
+                        follow_flag = True
+                        if item["status"]["data"]["user"]["following"] == True:
+                            rep_text = "既にフォローしています"
+                        else:
+                            print("フォロー : " + user_name + "  @" + item["status"]["data"]["user"]["screen_name"])
+                            followed = get_followed(user_id, driver)
+                            if followed == 1:
+                                follow = following(user_id, driver)
+                                if follow == True:
+                                    rep_text = "フォローしました"
+                                else:
+                                   rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
+                            elif followed == 2:
+                                rep_text = "334Rankerをフォローしてからお試しください"
                             else:
                                 rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
-                        elif followed == 2:
-                            rep_text = "334Rankerをフォローしてからお試しください"
-                        else:
-                            rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
                 else:
                     rep_text = has_rank(user_id, user_name, item)
                     if rep_text == False or rep_text == True:
@@ -662,21 +666,24 @@ def receive(dict, driver):
                         user_name = "@" + item["status"]["data"]["user"]["screen_name"]
                     text = item["status"]["data"]["full_text"].lower()
                     if "フォロー" in text:
-                        if item["status"]["data"]["user"]["following"] == True:
-                            rep_text = "既にフォローしています"
-                        else:
-                            print("フォロー : " + user_name + "  @" + item["status"]["data"]["user"]["screen_name"])
-                            followed = get_followed(user_id, driver)
-                            if followed == 1:
-                                follow = following(user_id, driver)
-                                if follow == True:
-                                    rep_text = "フォローしました"
+                        if item["status"]["data"]["id_str"] not in idlist:
+                            idlist.append(item["status"]["data"]["id_str"])
+                            follow_flag = True
+                            if item["status"]["data"]["user"]["following"] == True:
+                                rep_text = "既にフォローしています"
+                            else:
+                                print("フォロー : " + user_name + "  @" + item["status"]["data"]["user"]["screen_name"])
+                                followed = get_followed(user_id, driver)
+                                if followed == 1:
+                                    follow = following(user_id, driver)
+                                    if follow == True:
+                                        rep_text = "フォローしました"
+                                    else:
+                                        rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
+                                elif followed == 2:
+                                    rep_text = "334Rankerをフォローしてからお試しください"
                                 else:
                                     rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
-                            elif followed == 2:
-                                rep_text = "334Rankerをフォローしてからお試しください"
-                            else:
-                                rep_text = "エラーが発生しました🙇\n時間をおいてもう一度お試しください"
                     else:
                         rep_text = has_rank(user_id, user_name, item)
                         if rep_text == True:
@@ -706,8 +713,9 @@ def receive(dict, driver):
                             rep_text = "ツイート時刻：" + TimeToStr(orig_time)
 
             if rep_text != False:
-                if item["status"]["data"]["id_str"] not in idlist:
-                    idlist.append(item["status"]["data"]["id_str"])
+                if item["status"]["data"]["id_str"] not in idlist or follow_flag == True:
+                    if follow_flag == False:
+                        idlist.append(item["status"]["data"]["id_str"])
                     print(item["status"]["data"]["user"]["name"])
                     req = copy.deepcopy(post_body)
                     req["variables"]["reply"]["in_reply_to_tweet_id"] = item["status"]["data"]["id_str"]

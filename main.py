@@ -310,12 +310,16 @@ def login_twitter2(account, password, tel, driver):
             try:
                 element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
             except:
-                element = WebDriverWait(driver3, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='/login']")))
-                time.sleep(1)
-                driver3.find_element(By.CSS_SELECTOR, "[href='/login']").click()
-                time.sleep(2)
-                driver3.get('https://twitter.com/Rank334_2/status/1624490398730321920')
-                element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
+                try:
+                    element = WebDriverWait(driver3, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='/login']")))
+                    time.sleep(1)
+                    driver3.find_element(By.CSS_SELECTOR, "[href='/login']").click()
+                    time.sleep(2)
+                    driver3.get('https://twitter.com/Rank334_2/status/1624490398730321920')
+                    element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
+                except:
+                    sys.exit(1)
+                    break
             time.sleep(1)
 
             element_box = driver3.find_element(By.CSS_SELECTOR, "[role=textbox]")

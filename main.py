@@ -1564,6 +1564,7 @@ def start():
             options.add_argument("--disable-gpu")
             options.add_argument('--disable-dev-shm-usage')
             driver = webdriver.Chrome(options = options)
+            driver.set_script_timeout(5)
             driver3 = webdriver.Chrome(options = options)
             
         except Exception as e:

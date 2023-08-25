@@ -770,12 +770,16 @@ xhr.withCredentials = true;
 xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
         if (xhr.status == 200) {
-            out = JSON.parse(xhr.responseText);
-            out2 = [];
-            for(var i = 0; i < out.statuses.length; i++) {
-                out2.push({"status": {"data": out.statuses[i]}})
+            try {
+                out = JSON.parse(xhr.responseText);
+                out2 = [];
+                for(var i = 0; i < out.statuses.length; i++) {
+                    out2.push({"status": {"data": out.statuses[i]}})
+                }
+                callback(out2);
+            } catch {
+                callback([]);
             }
-            callback(out2);
         }
         else callback([]);
     }

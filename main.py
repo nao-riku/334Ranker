@@ -30,7 +30,6 @@ getuser_body = {}
 not_url = ""
 not_body = {}
 search_body = {}
-search2_body = {}
 idlist = []
 driver3 = ""
 driver4 = ""
@@ -304,7 +303,7 @@ def login_twitter2(account, password, tel, driver):
             break
 
 
-    global post_body_2, search2_body
+    global post_body_2
     for _ in range(5):
         try:
             driver3.get('https://twitter.com/Rank334_2/status/1624490398730321920')
@@ -345,37 +344,9 @@ def login_twitter2(account, password, tel, driver):
                     break
                 time.sleep(0.5)
                     
-            time.sleep(3)
-	    
-            driver.get('https://twitter.com/search?q=@rank334&src=typed_query&f=live')
-            time.sleep(20)
-            
-            for _ in range(5):
-                for request in driver.requests:
-                    if request.response:
-                        if "SearchTimeline" in request.url and "graphql" in request.url:
-                            if request.body != b'':
-                                search2_body2 = json.loads(request.body)
-                                time.sleep(0.5)
-                                if "variables" in search2_body2:
-                                    search2_body = search2_body2
-                                    print("set search2_body")
-                                    break
-                            else:
-                                search2_body2 = request.params
-                                time.sleep(0.5)
-                                if "variables" in search2_body2:
-                                    search2_body = search2_body2
-                                    for key in search2_body:
-                                    	search2_body[key] = json.loads(search2_body[key])
-                                    print("set search2_body")
-                                    break
-                if search2_body != {}:
-                    break
-                time.sleep(0.5)
 
             time.sleep(3)
-		
+
         except Exception as e:
             traceback.print_exc()
             time.sleep(2)
@@ -925,115 +896,6 @@ return adaptive;
                     if end + datetime.timedelta(seconds=20) < datetime.datetime.now():
                         print_log(driver)
                         break
-            break
-        time.sleep(0.01)
-
-
-
-def interval3(until):
-    while True:
-        if until < datetime.datetime.now():
-            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 40):
-                threading.Thread(target=interval3, args=(until, until + datetime.timedelta(seconds = 1),)).start()
-            since = until - datetime.timedelta(seconds = 2)
-            res = driver3.execute_async_script("""
-
-var cookie = document.cookie.replaceAll(" ", "").split(";");
-var token = "";
-cookie.forEach(function (value) {
-    let content = value.split('=');
-    if (content[0] == "ct0") token = content[1];
-})
-
-var callback = arguments[arguments.length - 1];
-
-function get_queryid(name, defaultId) {
-    try {
-        let queryids = webpackChunk_twitter_responsive_web;
-        for (let i = 0; i < queryids.length; i++) {
-            for (let key in queryids[i][1]) {
-                try {
-                    if (queryids[i][1][key].length === 1) {
-                        let tmp = {};
-                        queryids[i][1][key](tmp);
-                        if (tmp.exports.operationName === name) return tmp.exports.queryId;
-                    }
-                } catch { }
-            }
-        }
-        return defaultId;
-    } catch {
-        return defaultId;
-    }
-}
-
-var data2 = arguments[1];
-data2.variables["cursor"] = "";
-data2.variables["rawQuery"] = "@rank334 -filter:retweets -from:rank334 -from:rank334_2 since:""" + since.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """"
-let queryid2 = get_queryid("SearchTimeline", "KUnA_SzQ4DMxcwWuYZh9qg");
-
-function setheader(xhr) {
-    xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
-    xhr.setRequestHeader('x-csrf-token', token);
-    xhr.setRequestHeader('x-twitter-active-user', 'yes');
-    xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
-    xhr.setRequestHeader('x-twitter-client-language', 'ja');
-    xhr.withCredentials = true;
-}
-
-let out4 = [];
-     
-        let param = "?" + Object.entries(d).map((e) => {
-            return `${e[0].replaceAll("%22", "")}=${encodeURIComponent(JSON.stringify(e[1]))}`
-        }).join("&")
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://api.twitter.com/graphql/' + queryid2 + '/SearchTimeline' + param);
-        setheader(xhr);
-        xhr.setRequestHeader('content-type', 'application/json');
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    try {
-                        let instructions = JSON.parse(xhr.responseText).data.search_by_raw_query.search_timeline.timeline.instructions;
-                        for (let j = 0; j < instructions.length; j++) {
-                            if ("entries" in instructions[j]) var entries = instructions[j].entries;
-                            else if ("entry" in instructions[j]) var entries = [instructions[j].entry];
-                            else continue;
-                            for (let i = 0; i < entries.length; i++) {
-                                if (!entries[i].entryId.includes("promoted") && !entries[i].entryId.includes("cursor")) {
-                                    try {
-                                        var res = entries[i].content.itemContent.tweet_results.result;
-                                        if ("tweet" in res) res = res.tweet;
-                                        let legacy = res.legacy;
-                                        legacy["text"] = legacy.full_text;
-                                        if (!legacy.text.toLowerCase().includes("@rank334") && !legacy.text.toLowerCase().includes("@rank334_2")) continue;
-                                        legacy["source"] = res.source;
-                                        legacy["user"] = res.core.user_results.result.legacy;
-                                        legacy.user["id_str"] = legacy.user_id_str;
-                                        out4.push({
-                                            "status": {
-                                                "data": legacy
-                                            }
-                                        });
-                                        continue;
-                                    } catch (e) {
-                                        console.error(e);
-                                    }
-                                }
-                            }
-                        }
-			callback(out4);
-                    } catch (e) {
-                        console.error(e);
-                        callback(out4);
-                    }
-                } else callback(out4);
-            }
-        }
-        xhr.send();
-            """, search2_body)
-            if res != []:
-                receive(res, driver)
             break
         time.sleep(0.01)
 
@@ -1740,7 +1602,6 @@ def start():
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
-                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 51),)).start()
                 notice(driver)
                 get_334(driver)
                 

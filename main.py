@@ -347,11 +347,11 @@ def login_twitter2(account, password, tel, driver):
                     
             time.sleep(3)
 	    
-            driver.get('https://twitter.com/search?q=@rank334&src=typed_query&f=live')
+            driver3.get('https://twitter.com/search?q=@rank334&src=typed_query&f=live')
             time.sleep(20)
             
             for _ in range(5):
-                for request in driver.requests:
+                for request in driver3.requests:
                     if request.response:
                         if "SearchTimeline" in request.url and "graphql" in request.url:
                             if request.body != b'':

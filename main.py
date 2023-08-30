@@ -938,7 +938,7 @@ def interval3(until):
     while True:
         if until < datetime.datetime.now():
             print(search2_body)
-            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 2, 40):
+            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 22, 40):
                 threading.Thread(target=interval3, args=(until, until + datetime.timedelta(seconds = 1),)).start()
             since = until - datetime.timedelta(seconds = 2)
             res = driver3.execute_async_script("""
@@ -1727,8 +1727,8 @@ def start():
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 8, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0)], #8:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0)], #12:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0)], #16:03
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 3, 0) + datetime.timedelta(days=0)], #20:03
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)]
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 3, 0)], #20:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 23, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)]
     ]
     for i in range(len(times)):
         if start_now < times[i][0]:
@@ -1745,7 +1745,7 @@ def start():
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
 
-            threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 0, 51),)).start()
+            threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 20, 51),)).start()
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
                 threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 51),)).start()
                 notice(driver)

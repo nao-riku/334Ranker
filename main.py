@@ -934,7 +934,7 @@ return adaptive;
 def interval3(until):
     while True:
         if until < datetime.datetime.now():
-            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 40):
+            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 48):
                 threading.Thread(target=interval3, args=(until + datetime.timedelta(seconds = 1),)).start()
             since = until - datetime.timedelta(seconds = 2)
             res = driver3.execute_async_script("""
@@ -1740,7 +1740,7 @@ def start():
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
-                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 51),)).start()
+                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0),)).start()
                 notice(driver)
                 get_334(driver)
                 

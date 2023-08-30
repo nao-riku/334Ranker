@@ -931,13 +931,15 @@ return adaptive;
 
 
 
-def interval3(until):
+def interval3(until, index, driver):
     while True:
         if until < datetime.datetime.now():
             if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 48):
-                threading.Thread(target=interval3, args=(until + datetime.timedelta(seconds = 1),)).start()
+                threading.Thread(target=interval3, args=(until + datetime.timedelta(seconds = 1), index + 1, driver,)).start()
             since = until - datetime.timedelta(seconds = 2)
-            res = driver3.execute_async_script("""
+            driver3.execute_script("""
+window.search[""" + index + """] = "";
+
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
 cookie.forEach(function (value) {
@@ -945,7 +947,9 @@ cookie.forEach(function (value) {
     if (content[0] == "ct0") token = content[1];
 })
 
-var callback = arguments[arguments.length - 1];
+function callback(out) {
+    window.search[""" + index + """] = out;
+}
 
 function get_queryid(name, defaultId) {
     try {
@@ -1032,8 +1036,13 @@ let out4 = [];
         }
         xhr.send();
             """, search2_body)
-            if res != []:
-                receive(res, driver)
+            while True:
+                time.sleep(0.01)
+                out = driver.execute_script("return window.search[" + index + "];")
+                if out != "":
+                    if out != []:
+                        receive(res, driver)
+                    break
             break
         time.sleep(0.01)
 
@@ -1740,7 +1749,7 @@ def start():
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
-                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0),)).start()
+                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0), 0, driver,)).start()
                 notice(driver)
                 get_334(driver)
                 

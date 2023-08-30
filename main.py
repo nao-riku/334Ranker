@@ -307,6 +307,36 @@ def login_twitter2(account, password, tel, driver):
     global post_body_2, search2_body
     for _ in range(5):
         try:
+            driver3.get('https://twitter.com/search?q=@rank334&src=typed_query&f=live')
+            time.sleep(20)
+            
+            for _ in range(5):
+                for request in driver3.requests:
+                    if request.response:
+                        if "SearchTimeline" in request.url and "graphql" in request.url:
+                            if request.body != b'':
+                                search2_body2 = json.loads(request.body)
+                                time.sleep(0.5)
+                                if "variables" in search2_body2:
+                                    search2_body = search2_body2
+                                    print("set search2_body")
+                                    break
+                            else:
+                                search2_body2 = request.params
+                                time.sleep(0.5)
+                                if "variables" in search2_body2:
+                                    search2_body = search2_body2
+                                    for key in search2_body:
+                                    	search2_body[key] = json.loads(search2_body[key])
+                                    print("set search2_body")
+                                    break
+                if search2_body != {}:
+                    break
+                time.sleep(0.5)
+
+            time.sleep(3)
+            
+            
             driver3.get('https://twitter.com/Rank334_2/status/1624490398730321920')
             try:
                 element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
@@ -345,35 +375,6 @@ def login_twitter2(account, password, tel, driver):
                     break
                 time.sleep(0.5)
                     
-            time.sleep(3)
-	    
-            driver3.get('https://twitter.com/search?q=@rank334&src=typed_query&f=live')
-            time.sleep(20)
-            
-            for _ in range(5):
-                for request in driver3.requests:
-                    if request.response:
-                        if "SearchTimeline" in request.url and "graphql" in request.url:
-                            if request.body != b'':
-                                search2_body2 = json.loads(request.body)
-                                time.sleep(0.5)
-                                if "variables" in search2_body2:
-                                    search2_body = search2_body2
-                                    print("set search2_body")
-                                    break
-                            else:
-                                search2_body2 = request.params
-                                time.sleep(0.5)
-                                if "variables" in search2_body2:
-                                    search2_body = search2_body2
-                                    for key in search2_body:
-                                    	search2_body[key] = json.loads(search2_body[key])
-                                    print("set search2_body")
-                                    break
-                if search2_body != {}:
-                    break
-                time.sleep(0.5)
-
             time.sleep(3)
 		
         except Exception as e:
@@ -934,10 +935,9 @@ def interval3(until):
     while True:
         if until < datetime.datetime.now():
             if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 40):
-                threading.Thread(target=interval3, args=(until, until + datetime.timedelta(seconds = 1),)).start()
+                threading.Thread(target=interval3, args=(until + datetime.timedelta(seconds = 1),)).start()
             since = until - datetime.timedelta(seconds = 2)
             res = driver3.execute_async_script("""
-
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
 cookie.forEach(function (value) {
@@ -967,7 +967,7 @@ function get_queryid(name, defaultId) {
     }
 }
 
-var data2 = arguments[1];
+var data2 = arguments[0];
 data2.variables["cursor"] = "";
 data2.variables["rawQuery"] = "@rank334 -filter:retweets -from:rank334 -from:rank334_2 since:""" + since.strftime('%Y-%m-%d_%H:%M:%S_JST') + """ until:""" + until.strftime('%Y-%m-%d_%H:%M:%S_JST') + """"
 let queryid2 = get_queryid("SearchTimeline", "KUnA_SzQ4DMxcwWuYZh9qg");
@@ -983,7 +983,7 @@ function setheader(xhr) {
 
 let out4 = [];
      
-        let param = "?" + Object.entries(d).map((e) => {
+        let param = "?" + Object.entries(data2).map((e) => {
             return `${e[0].replaceAll("%22", "")}=${encodeURIComponent(JSON.stringify(e[1]))}`
         }).join("&")
         var xhr = new XMLHttpRequest();
@@ -1022,7 +1022,7 @@ let out4 = [];
                                 }
                             }
                         }
-			callback(out4);
+                        callback(out4);
                     } catch (e) {
                         console.error(e);
                         callback(out4);

@@ -933,7 +933,7 @@ return adaptive;
 def interval3(until):
     while True:
         if until < datetime.datetime.now():
-            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 40):
+            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 44, 40):
                 threading.Thread(target=interval3, args=(until, until + datetime.timedelta(seconds = 1),)).start()
             since = until - datetime.timedelta(seconds = 2)
             res = driver3.execute_async_script("""
@@ -1032,6 +1032,7 @@ let out4 = [];
         }
         xhr.send();
             """, search2_body)
+            print(search2_body)
             if res != []:
                 receive(res, driver)
             break
@@ -1738,9 +1739,9 @@ def start():
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
-            
+            threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 33, 51),)).start()
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
-                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 51),)).start()
+                
                 notice(driver)
                 get_334(driver)
                 

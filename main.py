@@ -307,6 +307,37 @@ def login_twitter2(account, password, tel, driver):
     global post_body_2, search2_body
     for _ in range(5):
         try:
+            driver3.get('https://twitter.com/search?q=@rank334&src=typed_query&f=live')
+            time.sleep(20)
+            
+            for _ in range(5):
+                for request in driver3.requests:
+                    if request.response:
+                        if "SearchTimeline" in request.url and "graphql" in request.url:
+                            if request.body != b'':
+                                search2_body2 = json.loads(request.body)
+                                time.sleep(0.5)
+                                if "variables" in search2_body2:
+                                    search2_body = search2_body2
+                                    print("set search2_body")
+                                    break
+                            else:
+                                search2_body2 = request.params
+                                time.sleep(0.5)
+                                if "variables" in search2_body2:
+                                    search2_body = search2_body2
+                                    for key in search2_body:
+                                    	search2_body[key] = json.loads(search2_body[key])
+                                    print("set search2_body")
+                                    break
+                if search2_body != {}:
+                    print(search2_body)
+                    break
+                time.sleep(0.5)
+
+            time.sleep(3)
+            
+            
             driver3.get('https://twitter.com/Rank334_2/status/1624490398730321920')
             try:
                 element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
@@ -347,34 +378,6 @@ def login_twitter2(account, password, tel, driver):
                     
             time.sleep(3)
 	    
-            driver3.get('https://twitter.com/search?q=@rank334&src=typed_query&f=live')
-            time.sleep(20)
-            
-            for _ in range(5):
-                for request in driver3.requests:
-                    if request.response:
-                        if "SearchTimeline" in request.url and "graphql" in request.url:
-                            if request.body != b'':
-                                search2_body2 = json.loads(request.body)
-                                time.sleep(0.5)
-                                if "variables" in search2_body2:
-                                    search2_body = search2_body2
-                                    print("set search2_body")
-                                    break
-                            else:
-                                search2_body2 = request.params
-                                time.sleep(0.5)
-                                if "variables" in search2_body2:
-                                    search2_body = search2_body2
-                                    for key in search2_body:
-                                    	search2_body[key] = json.loads(search2_body[key])
-                                    print("set search2_body")
-                                    break
-                if search2_body != {}:
-                    break
-                time.sleep(0.5)
-
-            time.sleep(3)
 		
         except Exception as e:
             traceback.print_exc()
@@ -389,6 +392,7 @@ def login_twitter2(account, password, tel, driver):
 
 def reply(req, driver):
     print("reply start", datetime.datetime.now())
+    return
     driver.execute_script("""
 var url = arguments[0];
 var data = JSON.stringify(arguments[1]);
@@ -933,7 +937,8 @@ return adaptive;
 def interval3(until):
     while True:
         if until < datetime.datetime.now():
-            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 40):
+            print(search2_body)
+            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 2, 40):
                 threading.Thread(target=interval3, args=(until, until + datetime.timedelta(seconds = 1),)).start()
             since = until - datetime.timedelta(seconds = 2)
             res = driver3.execute_async_script("""
@@ -1722,7 +1727,7 @@ def start():
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 8, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0)], #8:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0)], #12:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0)], #16:03
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)], #20:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 3, 0) + datetime.timedelta(days=0)], #20:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)]
     ]
     for i in range(len(times)):
@@ -1736,9 +1741,11 @@ def start():
                 end_time = times[i][0]
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
+            print(search2_body)
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
-            
+
+            threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 0, 51),)).start()
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
                 threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 51),)).start()
                 notice(driver)

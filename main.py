@@ -1040,10 +1040,10 @@ let out4 = [];
             """, search2_body)
             while True:
                 time.sleep(0.01)
-                out = driver.execute_script("return window.search[" + str(index) + "];")
+                out = driver3.execute_script("return window.search[" + str(index) + "];")
                 if out != "":
                     if out != []:
-                        receive(res, driver)
+                        receive(out, driver)
                     break
             break
         time.sleep(0.01)

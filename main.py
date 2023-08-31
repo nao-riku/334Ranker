@@ -932,6 +932,8 @@ return adaptive;
 
 
 def interval3(until, index, driver):
+    if index == 0:
+        driver3.execute_script("window.search = {};")
     while True:
         if until < datetime.datetime.now():
             if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 48):

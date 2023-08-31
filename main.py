@@ -940,7 +940,7 @@ def interval3(until, index, driver):
                 threading.Thread(target=interval3, args=(until + datetime.timedelta(seconds = 1), index + 1, driver,)).start()
             since = until - datetime.timedelta(seconds = 2)
             driver3.execute_script("""
-window.search[""" + index + """] = "";
+window.search[""" + str(index) + """] = "";
 
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
@@ -950,7 +950,7 @@ cookie.forEach(function (value) {
 })
 
 function callback(out) {
-    window.search[""" + index + """] = out;
+    window.search[""" + str(index) + """] = out;
 }
 
 function get_queryid(name, defaultId) {
@@ -1040,7 +1040,7 @@ let out4 = [];
             """, search2_body)
             while True:
                 time.sleep(0.01)
-                out = driver.execute_script("return window.search[" + index + "];")
+                out = driver.execute_script("return window.search[" + str(index) + "];")
                 if out != "":
                     if out != []:
                         receive(res, driver)

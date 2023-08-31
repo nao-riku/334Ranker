@@ -939,7 +939,7 @@ def interval3(until, index, driver):
         driver3.execute_script("window.search = {};")
     while True:
         if until < datetime.datetime.now():
-            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 6, 44, 48):
+            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 6, 48):
                 threading.Thread(target=interval3, args=(until + datetime.timedelta(seconds = 1), index + 1, driver,)).start()
             since = until - datetime.timedelta(seconds = 2)
             driver3.execute_script("""
@@ -1043,7 +1043,7 @@ let out4 = [];
             """, search2_body)
             while True:
                 time.sleep(0.01)
-                out = driver.execute_script("return window.search[" + str(index) + "];")
+                out = driver3.execute_script("return window.search[" + str(index) + "];")
                 if out != "":
                     if out != []:
                         receive(res, driver)
@@ -1732,8 +1732,8 @@ def start():
             
     times = [
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 4, 33, 0)], #0:03
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 4, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 6, 45, 0)], #4:03
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 6, 45, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0)], #8:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 4, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 7, 0)], #4:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 7, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0)], #8:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0)], #12:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0)], #16:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)], #20:03
@@ -1752,7 +1752,7 @@ def start():
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
-            threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 6, 42, 0), 0, driver,)).start()
+            threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 7, 5, 0), 0, driver,)).start()
 		
 
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):

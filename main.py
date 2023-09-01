@@ -660,7 +660,7 @@ def receive(dict, driver):
         if item["status"]["data"]["user"]["id_str"] != ranker_id and item["status"]["data"]["user"]["id_str"] != ranker_id_2:
             rep_text = False
             follow_flag = False
-            if item["status"]["data"]["in_reply_to_status_id_str"] == None:
+            if "in_reply_to_status_id_str" not in item["status"]["data"] or item["status"]["data"]["in_reply_to_status_id_str"] == None:
                 user_id = item["status"]["data"]["user"]["id_str"]
                 text = item["status"]["data"]["full_text"].lower()
                 mentions = item["status"]["data"]["entities"]["user_mentions"]

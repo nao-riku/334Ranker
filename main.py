@@ -886,7 +886,7 @@ cookie.forEach(function (value) {
 })
 
 var callback = arguments[arguments.length - 1];
-
+/*
 var xhr = new XMLHttpRequest();
 xhr.open('GET', url);
 xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
@@ -914,7 +914,9 @@ xhr.onreadystatechange = function () {
     }
 }
 
-xhr.send();
+xhr.send();*/
+
+callback([]);
             """)
             if res != []:
                 receive(res, driver)

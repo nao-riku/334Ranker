@@ -1,5 +1,6 @@
 import chromedriver_binary
 from seleniumwire import webdriver
+from seleniumwire.utils import decode
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.alert import Alert
@@ -62,7 +63,7 @@ def tweet(driver, account, password, tel):
     global post_body, post_url
     for _ in range(5):
         try:
-            driver.get('https://twitter.com/Rank334/status/1680953311317590016')
+            driver.get('https://twitter.com/Rank334_2/status/1705386885135343879')
             try:
                 element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
             except:
@@ -71,7 +72,7 @@ def tweet(driver, account, password, tel):
                     time.sleep(1)
                     driver.find_element(By.CSS_SELECTOR, "[href='/login']").click()
                     time.sleep(20)
-                    driver.get('https://twitter.com/Rank334/status/1680953311317590016')
+                    driver.get('https://twitter.com/Rank334_2/status/1705386885135343879')
                     element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
                 except:
                     sys.exit(1)
@@ -80,7 +81,7 @@ def tweet(driver, account, password, tel):
             time.sleep(1)
 
             element_box = driver.find_element(By.CSS_SELECTOR, "[role=textbox]")
-            element_box.send_keys("詳しくは固定ツイートをご覧ください")
+            element_box.send_keys("ツイート時刻：10:01:32.629")
             time.sleep(2) 
             
             driver.find_element(By.CSS_SELECTOR, "[data-testid=tweetButtonInline]").click()
@@ -97,6 +98,55 @@ def tweet(driver, account, password, tel):
                             if "variables" in post_body2:
                                 post_body = post_body2
                                 print("set post_body")
+
+                                try:
+                                    restid = json.loads(decode(request.response.body, request.response.headers.get('Content-Encoding', 'identity')))["data"]["create_tweet"]["tweet_results"]["result"]["rest_id"]
+                                    driver.execute_script("""
+var restid = arguments[0];
+var data = {"variables": {"tweet_id": restid, "dark_request": false}};
+
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+
+function get_queryid(name, defaultId) {
+    try {
+        let queryids = webpackChunk_twitter_responsive_web;
+        for (let i = 0; i < queryids.length; i++) {
+            for (let key in queryids[i][1]) {
+                try {
+                    if (queryids[i][1][key].length === 1) {
+                        let tmp = {};
+                        queryids[i][1][key](tmp);
+                        if (tmp.exports.operationName === name) return tmp.exports.queryId;
+                    }
+                } catch { }
+            }
+        }
+        return defaultId;
+    } catch {
+        return defaultId;
+    }
+}
+
+var xhr = new XMLHttpRequest();
+xhr.open('POST', 'https://twitter.com/i/api/graphql/' + get_queryid('DeleteTweet', 'VaenaVgh5q5ih7kvyVjgtg') + '/DeleteTweet');
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+xhr.setRequestHeader('x-csrf-token', token);
+xhr.setRequestHeader('x-twitter-active-user', 'yes');
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+xhr.setRequestHeader('x-twitter-client-language', 'ja');
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.withCredentials = true;
+xhr.send(JSON.stringify(data));
+
+""", restid)
+                                except Exception as e:
+                                    traceback.print_exc()
+                                    time.sleep(2)
                                 break
                 if post_body != {}:
                     break
@@ -337,7 +387,7 @@ def login_twitter2(account, password, tel, driver):
             time.sleep(3)
             
             
-            driver3.get('https://twitter.com/Rank334_2/status/1624490398730321920')
+            driver3.get('https://twitter.com/Rank334_2/status/1705386885135343879')
             try:
                 element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
             except:
@@ -346,7 +396,7 @@ def login_twitter2(account, password, tel, driver):
                     time.sleep(1)
                     driver3.find_element(By.CSS_SELECTOR, "[href='/login']").click()
                     time.sleep(2)
-                    driver3.get('https://twitter.com/Rank334_2/status/1624490398730321920')
+                    driver3.get('https://twitter.com/Rank334_2/status/1705386885135343879')
                     element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
                 except:
                     sys.exit(1)
@@ -354,7 +404,7 @@ def login_twitter2(account, password, tel, driver):
             time.sleep(1)
 
             element_box = driver3.find_element(By.CSS_SELECTOR, "[role=textbox]")
-            element_box.send_keys("Ranker稼働中")
+            element_box.send_keys("ツイート時刻：10:01:32.629")
             time.sleep(2) 
             
             driver3.find_element(By.CSS_SELECTOR, "[data-testid=tweetButtonInline]").click()
@@ -370,6 +420,55 @@ def login_twitter2(account, password, tel, driver):
                             if "variables" in post_body2:
                                 post_body_2 = post_body2
                                 print("set post_body_2")
+                                
+                                try:
+                                    restid = json.loads(decode(request.response.body, request.response.headers.get('Content-Encoding', 'identity')))["data"]["create_tweet"]["tweet_results"]["result"]["rest_id"]
+                                    driver3.execute_script("""
+var restid = arguments[0];
+var data = {"variables": {"tweet_id": restid, "dark_request": false}};
+
+var cookie = document.cookie.replaceAll(" ", "").split(";");
+var token = "";
+cookie.forEach(function (value) {
+    let content = value.split('=');
+    if (content[0] == "ct0") token = content[1];
+})
+
+function get_queryid(name, defaultId) {
+    try {
+        let queryids = webpackChunk_twitter_responsive_web;
+        for (let i = 0; i < queryids.length; i++) {
+            for (let key in queryids[i][1]) {
+                try {
+                    if (queryids[i][1][key].length === 1) {
+                        let tmp = {};
+                        queryids[i][1][key](tmp);
+                        if (tmp.exports.operationName === name) return tmp.exports.queryId;
+                    }
+                } catch { }
+            }
+        }
+        return defaultId;
+    } catch {
+        return defaultId;
+    }
+}
+
+var xhr = new XMLHttpRequest();
+xhr.open('POST', 'https://twitter.com/i/api/graphql/' + get_queryid('DeleteTweet', 'VaenaVgh5q5ih7kvyVjgtg') + '/DeleteTweet');
+xhr.setRequestHeader('Authorization', 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA');
+xhr.setRequestHeader('x-csrf-token', token);
+xhr.setRequestHeader('x-twitter-active-user', 'yes');
+xhr.setRequestHeader('x-twitter-auth-type', 'OAuth2Session');
+xhr.setRequestHeader('x-twitter-client-language', 'ja');
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.withCredentials = true;
+xhr.send(JSON.stringify(data));
+
+""", restid)
+                                except Exception as e:
+                                    traceback.print_exc()
+                                    time.sleep(2)
                                 break
                 if post_body_2 != {}:
                     break

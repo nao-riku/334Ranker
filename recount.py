@@ -1410,7 +1410,7 @@ def browser(tweets, driver2):
     
     for _ in range(5):
         try:
-            driver4.get(os.environ['HTML_URL'])
+            driver4.get("https://nao-riku.github.io/334Ranker/index.html")
             wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
             Alert(driver4).accept()
             driver4.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
@@ -1421,14 +1421,14 @@ def browser(tweets, driver2):
         else:
             Alert(driver4).accept()
             bin = driver4.execute_script('return window.res')
-            postrank(bin, driver2, "Today's top 30")
+            print(bin)
             wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())
             Alert(driver4).accept()
             break
             
-    dt = datetime.datetime.now()
-    if dt.replace(day=calendar.monthrange(dt.year, dt.month)[1]).day == dt.day:
-        browser2(driver4, driver2)
+    #dt = datetime.datetime.now()
+    #if dt.replace(day=calendar.monthrange(dt.year, dt.month)[1]).day == dt.day:
+        #browser2(driver4, driver2)
         
 
 
@@ -1463,6 +1463,7 @@ def make_ranking(dict, driver):
                 ])
 
     print(str(dict2))
+    threading.Thread(target=browser, args=(str(dict2), driver,)).start()
 
     
 

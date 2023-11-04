@@ -1422,8 +1422,8 @@ def browser(tweets, driver2):
             Alert(driver4).accept()
             bin = driver4.execute_script('return window.res')
             print(bin)
-            wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())
-            Alert(driver4).accept()
+            #wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())
+            #Alert(driver4).accept()
             break
             
     #dt = datetime.datetime.now()

@@ -1783,24 +1783,6 @@ def notice(driver):
             del req["variables"]['reply']
             print("notice tweet :")
             threading.Thread(target=reply, args=(req, driver,)).start()
-
-            for _ in range(10):
-                try:
-                    options=Options()
-                    #options.add_argument('--headless')
-                    options.add_argument('--no-sandbox')
-                    options.add_argument("--disable-extensions")
-                    options.add_argument("--disable-gpu")
-                    options.add_argument('--disable-dev-shm-usage')
-                    driver4 = webdriver.Chrome(options = options)
-                    driver4.set_window_size(620, 1)
-                    print("set driver4")
-            
-                except Exception as e:
-                    traceback.print_exc()
-                    time.sleep(2)
-                else:
-                    break
     
             break
         time.sleep(5)
@@ -1808,7 +1790,7 @@ def notice(driver):
 
 
 def start():
-    global start_now, start_time, end_time, driver3
+    global start_now, start_time, end_time, driver3, driver4
     for _ in range(10):
         try:
             options=Options()
@@ -1820,10 +1802,15 @@ def start():
             driver = webdriver.Chrome(options = options)
             driver.set_script_timeout(5)
             driver3 = webdriver.Chrome(options = options)
+            driver4 = webdriver.Chrome(options = options)
+            driver4.set_window_size(620, 1)
             
         except Exception as e:
             traceback.print_exc()
             time.sleep(2)
+            if _ == 9:
+                sys.exit(1)
+                break
         else:
             break
 

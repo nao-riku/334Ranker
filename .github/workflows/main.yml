@@ -12,13 +12,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Setup Python
+        id: set
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-          
+        continue-on-error: true
+        timeout-minutes: 1
+
+                
+      - name: Error handling
+        if: ${{ steps.set.outcome == 'failure' }}
+        run: |
+          echo "Error handling"
+          curl -X POST https://api.github.com/repos/nao-riku/334Ranker/dispatches \
+               -H 'authorization: Bearer '${{ secrets.KEY }} \
+               --data '{"event_type": "Error handling"}'
+          exit 1
+
           
       - name: Install Package
-        id: set
+        id: install
         continue-on-error: true
         run: |
           sudo languagesetup -langspec ja
@@ -32,7 +46,7 @@ jobs:
       
       
       - name: Error handling
-        if: ${{ steps.set.outcome == 'failure' }}
+        if: ${{ steps.install.outcome == 'failure' }}
         run: |
           echo "Error handling"
           curl -X POST https://api.github.com/repos/nao-riku/334Ranker/dispatches \

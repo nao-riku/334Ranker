@@ -86,7 +86,7 @@ def tweet(driver, account, password, tel):
                     element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[href='/login']")))
                     time.sleep(1)
                     driver.find_element(By.CSS_SELECTOR, "[href='/login']").click()
-                    time.sleep(20)
+                    time.sleep(2)
                     driver.get('https://twitter.com/Rank334_2/status/1705386885135343879')
                     element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
                 except:
@@ -100,7 +100,7 @@ def tweet(driver, account, password, tel):
             time.sleep(2) 
             
             driver.find_element(By.CSS_SELECTOR, "[data-testid=tweetButtonInline]").click()
-            time.sleep(20)
+            time.sleep(2)
 
 
             for _ in range(5):
@@ -197,7 +197,7 @@ def login_twitter(account, password, tel, driver):
                 act.perform()
             time.sleep(2)
             element_account.send_keys(Keys.ENTER)
-            time.sleep(20)
+            time.sleep(2)
 
             element_pass = driver.find_elements(By.TAG_NAME, "input")[1]
             for i in range(len(password)):
@@ -206,17 +206,17 @@ def login_twitter(account, password, tel, driver):
                 act.perform()
             time.sleep(2)
             element_pass.send_keys(Keys.ENTER)
-            time.sleep(20)
+            time.sleep(2)
 
             element_tel = driver.find_elements(By.NAME, "text")
             if len(element_tel) > 0:
                 element_tel[0].send_keys(tel)
                 time.sleep(2) 
                 element_tel[0].send_keys(Keys.ENTER)
-                time.sleep(20)
+                time.sleep(2)
 
             driver.get('https://twitter.com/home')
-            time.sleep(20)
+            time.sleep(2)
             
             for _ in range(5):
                 for request in driver.requests:
@@ -243,7 +243,7 @@ def login_twitter(account, password, tel, driver):
                 time.sleep(0.5)
 		
             driver.get('https://twitter.com/intent/user?user_id=1')
-            time.sleep(20)
+            time.sleep(2)
             
             for _ in range(5):
                 for request in driver.requests:
@@ -271,7 +271,7 @@ def login_twitter(account, password, tel, driver):
                 time.sleep(0.5)
 
             driver.get('https://twitter.com/notifications/mentions')
-            time.sleep(20)
+            time.sleep(2)
             
             for _ in range(5):
                 for request in driver.requests:
@@ -289,7 +289,7 @@ def login_twitter(account, password, tel, driver):
                 time.sleep(0.5)
             
             driver.get('https://twitter.com/search?q=334&src=typed_query&f=live')
-            time.sleep(20)
+            time.sleep(2)
             
             for _ in range(5):
                 for request in driver.requests:
@@ -344,7 +344,7 @@ def login_twitter2(account, password, tel, driver):
                 act.perform()
             time.sleep(2)
             element_account.send_keys(Keys.ENTER)
-            time.sleep(20)
+            time.sleep(2)
 
             element_pass = driver3.find_elements(By.TAG_NAME, "input")[1]
             for i in range(len(password)):
@@ -353,14 +353,14 @@ def login_twitter2(account, password, tel, driver):
                 act.perform()
             time.sleep(2)
             element_pass.send_keys(Keys.ENTER)
-            time.sleep(20)
+            time.sleep(2)
 
             element_tel = driver3.find_elements(By.NAME, "text")
             if len(element_tel) > 0:
                 element_tel[0].send_keys(tel)
                 time.sleep(2) 
                 element_tel[0].send_keys(Keys.ENTER)
-                time.sleep(20)
+                time.sleep(2)
         
         except Exception as e:
             traceback.print_exc()
@@ -373,7 +373,7 @@ def login_twitter2(account, password, tel, driver):
     for _ in range(5):
         try:
             driver3.get('https://twitter.com/search?q=@rank334&src=typed_query&f=live')
-            time.sleep(20)
+            time.sleep(2)
             
             for _ in range(5):
                 for request in driver3.requests:

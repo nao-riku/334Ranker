@@ -36,6 +36,7 @@ idlist = []
 driver3 = ""
 driver4 = ""
 limit = 0
+pre_result = {}
 
 start_now = datetime.datetime.now()
 start_time = ""
@@ -58,6 +59,20 @@ def get_allresult():
     else:
         print("loaded json")
 
+def get_preresult():
+    global pre_result
+    for _ in range(5):
+        try:
+            r = requests.get(os.environ['GAS_URL'] + "?p=pre")
+            r_json = r.json()
+            time.sleep(0.5)
+            pre_result = r_json
+        except Exception as e:
+            traceback.print_exc()
+            time.sleep(2)
+        else:
+            print("loaded pre_result")
+            break
 
 def tweet(driver, account, password, tel):
     global post_body, post_url
@@ -601,7 +616,7 @@ def get_kyui(pt):
 
 
 def get_rank(key, name):
-    if world_rank == {}:
+    if today_result == {}:
         return True
     if key in world_rank:
         if world_rank[key][4] != world_rank[key][6]:
@@ -1429,7 +1444,91 @@ def browser(tweets, driver2):
     if dt.replace(day=calendar.monthrange(dt.year, dt.month)[1]).day == dt.day:
         browser2(driver4, driver2)
         
+def make_ranking2(dict):
+    global world_rank, today_result
+    preres = {}
+    clients = ["Twitter for iPhone",  "Twitter for Android",  "Twitter Web Client",  "TweetDeck",  "TweetDeck Web App",  "Twitter for iPad",  "Twitter for Mac",  "Twitter Web App",  "Twitter Lite",  "Mobile Web (M2)",  "Twitter for Windows",  "Janetter",  "Janetter for Android",  "Janetter Pro for iPhone",  "Janetter for Mac",  "Janetter Pro for Android",  "Tweetbot for iΟS",  "Tweetbot for iOS",  "Tweetbot for Mac",  "twitcle plus",  "ツイタマ",  "ツイタマ for Android",  "ツイタマ+ for Android",  "Sobacha",  "SobaCha",  "Metacha",  "MetaCha",  "MateCha",  "ツイッターするやつ",  "ツイッターするやつγ",  "ツイッターするやつγ pro",  "jigtwi",  "feather for iOS",  "hamoooooon",  "Hel2um on iOS",  "Hel1um Pro on iOS",  "Hel1um on iOS",  "undefined"]
+    ii = 1
+    todayplayer = []
+    for i in range(len(dict)):
+        todayplayer.append(dict[i][6])
+        if i > 1:
+            if float(dict[i][2]) > float(dict[i - 1][2]):
+                ii = i + 1
+        preres[dict[i][6]] = [str(ii), dict[i][1], dict[i][2]]
+        todayp = 10000 * 2 ** (-10 * float(dict[i][2]))
+        if dict[i][6] in world_rank:
+            if float(world_rank[dict[i][6]][0]) == float(dict[i][2]):
+                world_rank[dict[i][6]][1] += 1
+            if float(world_rank[dict[i][6]][0]) > float(dict[i][2]):
+                world_rank[dict[i][6]][0] = dict[i][2]
+            if float(pre_result[dict[i][6]][2]) < todayp:
+                world_rank[dict[i][6]][6] = str(round((float(pre_result[dict[i][6]][3]) + todayp) / 10, 2))
+            else:
+                world_rank[dict[i][6]][6] = str(round((float(pre_result[dict[i][6]][2]) + float(pre_result[dict[i][6]][3])) / 10, 2))
+            world_rank[dict[i][6]][4] = str(round((float(pre_result[dict[i][6]][0]) + float(pre_result[dict[i][6]][1])) / 10, 2))
+            for client in clients:
+                if client in dict[i][3]:
+                    if float(pre_result[dict[i][6]][0]) < todayp:
+                        world_rank[dict[i][6]][4] = str(round((float(pre_result[dict[i][6]][1]) + todayp) / 10, 2))
+                        if float(world_rank[dict[i][6]][4]) > float(world_rank[dict[i][6]][2]):
+                            world_rank[dict[i][6]][2] = world_rank[dict[i][6]][4]
+                    break
+            world_rank[dict[i][6]][7] += 1
+        else:
+            world_rank[dict[i][6]] = [dict[i][2], 1, "0.00", 0, "0.00", 0, str(round(todayp / 10, 2)), 1, 0, 0, 0, 0]
+            for client in clients:
+                if client in dict[i][3]:
+                    world_rank[dict[i][6]][2] = world_rank[dict[i][6]][6]
+                    world_rank[dict[i][6]][4] = world_rank[dict[i][6]][6]
+                    break
+        
+        if ii == 1:
+            world_rank[dict[i][6]][8] += 1
+        if ii == 2:
+            world_rank[dict[i][6]][9] += 1
+        if ii == 3:
+            world_rank[dict[i][6]][10] += 1
+        if ii <= 30:
+            world_rank[dict[i][6]][11] += 1
 
+    del world_rank["累計"]
+    del world_rank["現在"]
+    for key in world_rank.keys():
+        if key not in todayplayer:
+            world_rank[key][4] = str(round((float(pre_result[key][0]) + float(pre_result[key][1])) / 10, 2));
+            world_rank[key][6] = str(round((float(pre_result[key][2]) + float(pre_result[key][3])) / 10, 2));
+    world_sort1 = sorted(world_rank.items(), key=lambda x:float(x[1][2]), reverse=True)
+    ii = 0
+    count1 = 0
+    before = 10001.00
+    for i in world_sort1:
+        if float(i[1][2]) < before:
+            ii += 1
+            before = float(i[1][2])
+        if float(i[1][2]) == 0.00:
+            world_rank[i[0]][3] = '-'
+        else:
+            count1 += 1
+            world_rank[i[0]][3] = ii
+
+    world_sort2 = sorted(world_rank.items(), key=lambda x:float(x[1][4]), reverse=True)
+    ii = 0
+    count2 = 0
+    before = 10001.00
+    for i in world_sort2:
+        if float(i[1][4]) < before:
+            ii += 1
+            before = float(i[1][4])
+        if float(i[1][4]) == 0.00:
+            world_rank[i[0]][5] = '-'
+        else:
+            count2 += 1
+            world_rank[i[0]][5] = ii
+    world_rank["累計"] = count1
+    world_rank["現在"] = count2
+    today_result = preres
+                
 
 def make_ranking(dict, driver):
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)
@@ -1463,6 +1562,7 @@ def make_ranking(dict, driver):
 
     print(str(dict2))
     threading.Thread(target=browser, args=(str(dict2), driver,)).start()
+    threading.Thread(target=make_ranking2, args=(dict2,)).start()
 
     
 
@@ -1775,7 +1875,7 @@ def notice(driver):
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}
-            world_rank = {}
+            #world_rank = {}
             load_res_yet = True
             
             req = copy.deepcopy(post_body)

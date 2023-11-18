@@ -1542,6 +1542,7 @@ def make_ranking2(dict):
     world_rank["累計"] = [str(count1)]
     world_rank["現在"] = [str(count2)]
     today_result = preres
+    today_result["参加者数"] = [str(len(dict))]
                 
 
 def make_ranking(dict, driver):

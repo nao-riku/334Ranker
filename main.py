@@ -937,7 +937,7 @@ callback([]);
             """)
             if res != []:
                 receive(res, driver)
-            if datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 36, 0) < until and load_res_yet:
+            if datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 38, 0) < until and load_res_yet:
                 get_allresult()
             break
         time.sleep(0.01)

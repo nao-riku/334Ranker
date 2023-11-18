@@ -1543,6 +1543,7 @@ def make_ranking2(dict):
     world_rank["現在"] = [str(count2)]
     today_result = preres
     today_result["参加者数"] = [str(len(dict))]
+    print("set pre-result", datetime.datetime.now())
                 
 
 def make_ranking(dict, driver):

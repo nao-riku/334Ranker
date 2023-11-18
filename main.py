@@ -8,6 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from decimal import Decimal, ROUND_HALF_UP
+import math
 import threading
 import time
 import datetime
@@ -1444,12 +1446,21 @@ def browser(tweets, driver2):
     if dt.replace(day=calendar.monthrange(dt.year, dt.month)[1]).day == dt.day:
         browser2(driver4, driver2)
         
+def round(flo, num):
+    if num >= 4:
+        return math.floor(flo * (10 ** num)) / (10 ** num)
+    else:
+        n_str = str(flo)
+        return Decimal(n_str).quantize(Decimal(str(10 ** (-1 * num))), rounding=ROUND_HALF_UP)
+
 def make_ranking2(dict):
     global world_rank, today_result
     preres = {}
     clients = ["Twitter for iPhone",  "Twitter for Android",  "Twitter Web Client",  "TweetDeck",  "TweetDeck Web App",  "Twitter for iPad",  "Twitter for Mac",  "Twitter Web App",  "Twitter Lite",  "Mobile Web (M2)",  "Twitter for Windows",  "Janetter",  "Janetter for Android",  "Janetter Pro for iPhone",  "Janetter for Mac",  "Janetter Pro for Android",  "Tweetbot for iΟS",  "Tweetbot for iOS",  "Tweetbot for Mac",  "twitcle plus",  "ツイタマ",  "ツイタマ for Android",  "ツイタマ+ for Android",  "Sobacha",  "SobaCha",  "Metacha",  "MetaCha",  "MateCha",  "ツイッターするやつ",  "ツイッターするやつγ",  "ツイッターするやつγ pro",  "jigtwi",  "feather for iOS",  "hamoooooon",  "Hel2um on iOS",  "Hel1um Pro on iOS",  "Hel1um on iOS",  "undefined"]
     ii = 1
     todayplayer = []
+    for key in pre_result:
+        world_rank[key][2] = pre_result[key][4]
     for i in range(len(dict)):
         todayplayer.append(dict[i][6])
         if i > 1:
@@ -1463,24 +1474,24 @@ def make_ranking2(dict):
             if float(world_rank[dict[i][6]][0]) > float(dict[i][2]):
                 world_rank[dict[i][6]][0] = dict[i][2]
             if float(pre_result[dict[i][6]][2]) < todayp:
-                world_rank[dict[i][6]][6] = str(round((float(pre_result[dict[i][6]][3]) + todayp) / 10, 2))
+                world_rank[dict[i][6]][6] = '{:.2f}'.format(round((float(pre_result[dict[i][6]][3]) + todayp) / 10, 2))
             else:
-                world_rank[dict[i][6]][6] = str(round((float(pre_result[dict[i][6]][2]) + float(pre_result[dict[i][6]][3])) / 10, 2))
-            world_rank[dict[i][6]][4] = str(round((float(pre_result[dict[i][6]][0]) + float(pre_result[dict[i][6]][1])) / 10, 2))
+                world_rank[dict[i][6]][6] = '{:.2f}'.format(round((float(pre_result[dict[i][6]][2]) + float(pre_result[dict[i][6]][3])) / 10, 2))
+            world_rank[dict[i][6]][4] = str(round((float(pre_result[dict[i][6]][0]) + float(pre_result[dict[i][6]][1])) / 10, 4))
             for client in clients:
                 if client in dict[i][3]:
                     if float(pre_result[dict[i][6]][0]) < todayp:
-                        world_rank[dict[i][6]][4] = str(round((float(pre_result[dict[i][6]][1]) + todayp) / 10, 2))
+                        world_rank[dict[i][6]][4] = str(round((float(pre_result[dict[i][6]][1]) + todayp) / 10, 4))
                         if float(world_rank[dict[i][6]][4]) > float(world_rank[dict[i][6]][2]):
                             world_rank[dict[i][6]][2] = world_rank[dict[i][6]][4]
                     break
             world_rank[dict[i][6]][7] += 1
         else:
-            world_rank[dict[i][6]] = [dict[i][2], 1, "0.00", 0, "0.00", 0, str(round(todayp / 10, 2)), 1, 0, 0, 0, 0]
+            world_rank[dict[i][6]] = [dict[i][2], 1, "0.00", 0, "0.00", 0, '{:.2f}'.format(round(todayp / 10, 2)), 1, 0, 0, 0, 0]
             for client in clients:
                 if client in dict[i][3]:
-                    world_rank[dict[i][6]][2] = world_rank[dict[i][6]][6]
-                    world_rank[dict[i][6]][4] = world_rank[dict[i][6]][6]
+                    world_rank[dict[i][6]][2] = str(round(todayp / 10, 4))
+                    world_rank[dict[i][6]][4] = str(round(todayp / 10, 4))
                     break
         
         if ii == 1:
@@ -1496,17 +1507,18 @@ def make_ranking2(dict):
     del world_rank["現在"]
     for key in world_rank.keys():
         if key not in todayplayer:
-            world_rank[key][4] = str(round((float(pre_result[key][0]) + float(pre_result[key][1])) / 10, 2));
-            world_rank[key][6] = str(round((float(pre_result[key][2]) + float(pre_result[key][3])) / 10, 2));
+            world_rank[key][4] = str(round((float(pre_result[key][0]) + float(pre_result[key][1])) / 10, 4));
+            world_rank[key][6] = '{:.2f}'.format(round((float(pre_result[key][2]) + float(pre_result[key][3])) / 10, 2));
     world_sort1 = sorted(world_rank.items(), key=lambda x:float(x[1][2]), reverse=True)
     ii = 0
     count1 = 0
     before = 10001.00
     for i in world_sort1:
         if float(i[1][2]) < before:
-            ii += 1
+            ii = count1 + 1
             before = float(i[1][2])
-        if float(i[1][2]) == 0.00:
+        world_rank[i[0]][2] = '{:.2f}'.format(round(float(world_rank[i[0]][2]), 2))
+        if float(i[1][2]) == 0.0:
             world_rank[i[0]][3] = '-'
         else:
             count1 += 1
@@ -1518,13 +1530,15 @@ def make_ranking2(dict):
     before = 10001.00
     for i in world_sort2:
         if float(i[1][4]) < before:
-            ii += 1
+            ii = count2 + 1
             before = float(i[1][4])
-        if float(i[1][4]) == 0.00:
+        world_rank[i[0]][4] = '{:.2f}'.format(round(float(world_rank[i[0]][4]), 2))
+        if float(i[1][4]) == 0.0:
             world_rank[i[0]][5] = '-'
         else:
             count2 += 1
             world_rank[i[0]][5] = ii
+
     world_rank["累計"] = [str(count1)]
     world_rank["現在"] = [str(count2)]
     today_result = preres

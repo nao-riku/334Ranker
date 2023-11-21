@@ -58,6 +58,7 @@ jobs:
       - name: Run Python
         id: python
         continue-on-error: true
+        timeout-minutes: 350
         env:
           GAS_URL: ${{ secrets.GAS_URL }}
           HTML_URL: ${{ secrets.HTML_URL }}

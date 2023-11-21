@@ -1417,6 +1417,9 @@ def browser(tweets, driver2):
                 options.add_argument('--disable-dev-shm-usage')
                 driver4 = webdriver.Chrome(options = options)
                 driver4.set_window_size(620, 1)
+                driver4.get(os.environ['HTML_URL'])
+                wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
+                Alert(driver4).accept()
             
         except Exception as e:
             traceback.print_exc()
@@ -1426,9 +1429,6 @@ def browser(tweets, driver2):
     
     for _ in range(5):
         try:
-            driver4.get(os.environ['HTML_URL'])
-            wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
-            Alert(driver4).accept()
             driver4.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
             wait2 = WebDriverWait(driver4, 180).until(EC.alert_is_present())
         except Exception as e:
@@ -1920,6 +1920,9 @@ def start():
             driver3 = webdriver.Chrome(options = options)
             driver4 = webdriver.Chrome(options = options)
             driver4.set_window_size(620, 1)
+            driver4.get(os.environ['HTML_URL'])
+            wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
+            Alert(driver4).accept()
             
         except Exception as e:
             traceback.print_exc()

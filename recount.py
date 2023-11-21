@@ -1423,6 +1423,7 @@ def browser(tweets, driver2):
         else:
             Alert(driver4).accept()
             print("done", file=sys.stderr)
+            time.sleep(0.5)
             bin = driver4.execute_script('return window.res')
             print(bin)
             #wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())

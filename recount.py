@@ -94,7 +94,7 @@ def tweet(driver, account, password, tel):
                         if "CreateTweet" in request.url:
                             post_url = request.url
                             post_body2 = json.loads(request.body)
-                            time.sleep(0.5)
+                            time.sleep(0.1)
                             if "variables" in post_body2:
                                 post_body = post_body2
                                 print("set post_body")

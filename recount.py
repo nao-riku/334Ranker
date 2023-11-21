@@ -1809,6 +1809,7 @@ def start():
             driver4.get("https://nao-riku.github.io/334Ranker/index.html")
             wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
             Alert(driver4).accept()
+            print("driver4", file=sys.stderr)
             
         except Exception as e:
             traceback.print_exc()
@@ -1839,11 +1840,12 @@ def start():
                 end_time = times[i][0]
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
+            print("login", file=sys.stderr)
  
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             notice(driver)
-            
+            print("notice", file=sys.stderr)
             
             get_334(driver)
                 

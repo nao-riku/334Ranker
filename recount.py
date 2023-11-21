@@ -1414,6 +1414,7 @@ def browser(tweets, driver2):
     
     for _ in range(5):
         try:
+            print(driver4.current_url, file=sys.stderr)
             driver4.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
             wait2 = WebDriverWait(driver4, 180).until(EC.alert_is_present())
         except Exception as e:
@@ -1421,6 +1422,7 @@ def browser(tweets, driver2):
             time.sleep(1)
         else:
             Alert(driver4).accept()
+            print("done", file=sys.stderr)
             bin = driver4.execute_script('return window.res')
             print(bin)
             #wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())

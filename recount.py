@@ -1959,7 +1959,7 @@ def start():
             get_allresult()
             if len(sys.argv) != 1:
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=240)
-                end_time = datetime.timedelta(seconds=300)
+                end_time = start_time + datetime.timedelta(seconds=300)
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()

@@ -1879,7 +1879,6 @@ function get_tweets5(d) {
                             if ("entries" in instructions[j]) var entries = instructions[j].entries;
                             else if ("entry" in instructions[j]) var entries = [instructions[j].entry];
                             else continue;
-                            console.log(entries, 5)
                             for (let i = 0; i < entries.length; i++) {
                                 if (!entries[i].entryId.includes("promoted") && !entries[i].entryId.includes("cursor")) {
                                     try {

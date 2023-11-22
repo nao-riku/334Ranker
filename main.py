@@ -65,7 +65,7 @@ def get_preresult():
     global pre_result
     for _ in range(5):
         try:
-            r = requests.get(os.environ['GAS_URL'] + "?p=pre")
+            r = requests.get(os.environ['GAS_URL'] + "?p=pre", timeout=120)
             r_json = r.json()
             time.sleep(0.5)
             pre_result = r_json

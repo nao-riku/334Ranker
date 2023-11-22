@@ -506,6 +506,7 @@ xhr.send(JSON.stringify(data));
 
 def reply(req, driver):
     print("reply start", datetime.datetime.now())
+    return
     driver.execute_script("""
 var url = arguments[0];
 var data = JSON.stringify(arguments[1]);
@@ -883,7 +884,7 @@ def interval(since, until, end, index, driver):
         if until < datetime.datetime.now():
             if (end - until).total_seconds() <= 6:
                 add = (end - until).total_seconds()
-            elif datetime.datetime(until.year, until.month, until.day, 3, 28, 0) < datetime.datetime.now() < datetime.datetime(until.year, until.month, until.day, 3, 34, 2):
+            elif datetime.datetime(until.year, until.month, until.day, 22, 28, 0) < datetime.datetime.now() < datetime.datetime(until.year, until.month, until.day, 22, 34, 2):
                 add = 6
             elif index % 12 == 0:
                 add = 6
@@ -1054,7 +1055,7 @@ def interval3(until, index, driver):
         driver3.execute_script("window.search = {};")
     while True:
         if until < datetime.datetime.now():
-            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 48):
+            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 34, 48):
                 threading.Thread(target=interval3, args=(until + datetime.timedelta(seconds = 1), index + 1, driver,)).start()
             since = until - datetime.timedelta(seconds = 2)
             driver3.execute_script("""
@@ -1547,7 +1548,7 @@ def make_ranking2(dict):
                 
 
 def make_ranking(dict, driver):
-    time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)
+    time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 34, 0)
     winner = ""
     users = []
     dict2 = []
@@ -1583,9 +1584,9 @@ def make_ranking(dict, driver):
     
 
 def get_334(driver):
-    time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
-    time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
-    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
+    time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 33, 59)
+    time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 34, 2)
+    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 34, 2)
     while True:
         if get_time < datetime.datetime.now():
             print("get334 start: ")
@@ -1605,7 +1606,7 @@ cookie.forEach(function (value) {
     if (content[0] == "ct0") token = content[1];
 })
 let time1 = new Date()
-time1.setHours(3);
+time1.setHours(22);
 time1.setMinutes(34);
 time1.setSeconds(0);
 time1.setMilliseconds(0);
@@ -1940,7 +1941,7 @@ def start():
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 8, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0)], #8:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0)], #12:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0)], #16:03
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)], #20:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 36, 0)], #20:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)]
     ]
     for i in range(len(times)):
@@ -1958,7 +1959,7 @@ def start():
             threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
-                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0), 0, driver,)).start()
+                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 34, 0), 0, driver,)).start()
                 get_preresult()
                 notice(driver)
                 get_334(driver)

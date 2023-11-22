@@ -1439,6 +1439,8 @@ def browser(tweets, driver2):
             Alert(driver4).accept()
             print("ALERT", file=sys.stderr)
             bin = driver4.execute_script('return window.res')
+            time.sleep(1)
+            print(bin, file=sys.stderr)
             postrank(bin, driver2, "Today's top 30")
             wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())
             Alert(driver4).accept()
@@ -1891,7 +1893,7 @@ function final(out6) {
 
 def notice(driver):
     global today_result, world_rank, load_res_yet, driver4
-    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 52, 0)
+    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 2, 42, 0)
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}
@@ -1955,7 +1957,7 @@ def start():
             get_allresult()
             if len(sys.argv) != 1:
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=240)
-                end_time = times[i][0]
+                end_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 2, 43, 0)
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()

@@ -1960,11 +1960,11 @@ def start():
                 end_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 2, 43, 0)
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
-            threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
-            threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
+            #threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
+            #threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
             if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
-                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0), 0, driver,)).start()
+                #threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0), 0, driver,)).start()
                 get_preresult()
                 print("NOTICE", file=sys.stderr)
                 notice(driver)

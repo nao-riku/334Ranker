@@ -1598,6 +1598,7 @@ var out = [];
 var out2 = [];
 var out3 = [];
 var out4 = [];
+var out7 = [];
 var cookie = document.cookie.replaceAll(" ", "").split(";");
 var token = "";
 cookie.forEach(function (value) {
@@ -1644,6 +1645,7 @@ var count = 0;
 get_tweets2();
 get_tweets3(data);
 get_tweets4(data2);
+setTimeout(function() { get_tweets5(data2) }, 2000);
 
 
 function setheader(xhr) {
@@ -1832,7 +1834,7 @@ function get_tweets4(d) {
                                     }
                                 }
                                 if (entries[i].entryId.includes("bottom")) {
-                                    let data3 = Object.assign({}, data2);
+                                    let data3 = JSON.parse(JSON.stringify(data2));
                                     data3.variables.cursor = entries[i].content.value;
                                     flag = false;
                                     if (flag2) final(out4);
@@ -1856,10 +1858,84 @@ function get_tweets4(d) {
     }
 }
 
+function get_tweets5(d) {
+    try {
+        let param = "?" + Object.entries(d).map((e) => {
+            return `${e[0].replaceAll("%22", "")}=${encodeURIComponent(JSON.stringify(e[1]))}`
+        }).join("&")
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://api.twitter.com/graphql/' + queryid2 + '/SearchTimeline' + param);
+        setheader(xhr);
+        xhr.setRequestHeader('content-type', 'application/json');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                console.error("get5");
+                if (xhr.status === 200) {
+                    try {
+                        var flag = true;
+                        let instructions = JSON.parse(xhr.responseText).data.search_by_raw_query.search_timeline.timeline.instructions;
+                        var flag2 = true;
+                        loop: for (let j = 0; j < instructions.length; j++) {
+                            if ("entries" in instructions[j]) var entries = instructions[j].entries;
+                            else if ("entry" in instructions[j]) var entries = [instructions[j].entry];
+                            else continue;
+                            console.log(entries, 5)
+                            for (let i = 0; i < entries.length; i++) {
+                                if (!entries[i].entryId.includes("promoted") && !entries[i].entryId.includes("cursor")) {
+                                    try {
+                                        flag2 = false;
+                                        var res = entries[i].content.itemContent.tweet_results.result;
+                                        if ("tweet" in res) res = res.tweet;
+                                        let legacy = res.legacy;
+                                        if (new Date(legacy.created_at) < time1) {
+                                            if (entries[i].entryId.includes("home")) continue;
+                                            else {
+                                                flag = false;
+                                                final(out7);
+                                                break loop;
+                                            }
+                                        }
+                                        legacy["text"] = legacy.full_text;
+                                        if (legacy.text != "334") continue;
+                                        legacy["source"] = res.source;
+                                        legacy["index"] = parseInt(BigInt(legacy.id_str).toString(2).slice(0, -22), 2) + 1288834974657;
+                                        legacy["user"] = res.core.user_results.result.legacy;
+                                        legacy.user["id_str"] = legacy.user_id_str;
+                                        out7.push(legacy);
+                                        continue;
+                                    } catch (e) {
+                                        console.error(e);
+                                    }
+                                }
+                                if (entries[i].entryId.includes("bottom")) {
+                                    let data3 = JSON.parse(JSON.stringify(data2));
+                                    data3.variables.cursor = entries[i].content.value;
+                                    flag = false;
+                                    if (flag2) final(out7);
+                                    else get_tweets5(data3);
+                                    break loop;
+                                }
+                            }
+                        }
+                        if (flag) final(out7);
+                    } catch (e) {
+                        console.error(e);
+                        final(out7);
+                    }
+                } else final(out7);
+            }
+        }
+        xhr.send();
+    } catch (e) {
+        console.error(e);
+        final(out7);
+    }
+}
+
 function final(out6) {
     out = out.concat(out6);
     count++;
-    if (count < 3) return;
+    if (count < 4) return;
     let out5 = []
     let ids = [];
     out.sort((a, b) => a.index - b.index);

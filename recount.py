@@ -1473,6 +1473,8 @@ def make_ranking(dict, driver):
     
 
 def get_334(driver):
+    make_ranking([['https://pbs.twimg.com/profile_images/1443573882695282688/2T_FJvHi_normal.jpg', 'SuGaR', '0.001', '<a href="http://twitter.com/#!/download/ipad" rel="nofollow">Twitter for iPad</a>', '1727032628480717049', '@Sugar_Zucker830', '1261501969815834626']], driver)
+    return
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
     time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
     get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)

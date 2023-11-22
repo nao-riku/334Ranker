@@ -1423,7 +1423,7 @@ def browser(tweets, driver2):
         else:
             Alert(driver4).accept()
             print("done", file=sys.stderr)
-            time.sleep(0.5)
+            #time.sleep(0.5)
             bin = driver4.execute_script('return window.res')
             print(bin, file=sys.stderr)
             sys.exit()

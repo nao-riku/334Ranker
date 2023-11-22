@@ -1423,7 +1423,7 @@ def browser(tweets, driver2):
         else:
             Alert(driver4).accept()
             print("done", file=sys.stderr)
-            time.sleep(0.5)
+            time.sleep(1)
             bin = driver4.execute_script('return window.res')
             print(bin, file=sys.stderr)
             #wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())
@@ -1841,7 +1841,7 @@ def start():
             if len(sys.argv) != 1:
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=240)
                 end_time = times[i][0]
-            login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
+            login_twitter("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
             print("login", file=sys.stderr)
  

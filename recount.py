@@ -1401,6 +1401,7 @@ promise.then((e) => window.data = data2);
         else:
             Alert(driver).accept()
             bin = driver.execute_script('return window.res')
+            print(bin)
             postrank(bin, driver2, "This month's top 30")
             break
 

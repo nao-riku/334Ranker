@@ -1252,6 +1252,7 @@ xhr.send(JSON.stringify(data));
 
 def postrank(bin, driver, text):
 
+    print("start post", file=sys.stderr)
     driver.execute_script("""
 window.data2 = "";
 var bin = atob(arguments[0]);
@@ -1326,7 +1327,7 @@ function final(id) {
             req["variables"]["media"]["media_entities"] = [{"media_id": res, "tagged_users": []}]
             req["variables"]["tweet_text"] = text
             del req["variables"]['reply']
-            print("post rank :")
+            print("post rank :", file=sys.stderr)
             threading.Thread(target=reply, args=(req, driver,)).start()
             break
 

@@ -506,6 +506,7 @@ xhr.send(JSON.stringify(data));
 
 def reply(req, driver):
     print("reply start", datetime.datetime.now())
+    return
     driver.execute_script("""
 var url = arguments[0];
 var data = JSON.stringify(arguments[1]);
@@ -1053,7 +1054,7 @@ def interval3(until, index, driver):
     if index == 0:
         driver3.execute_script("window.search = {};")
     while True:
-        if until < datetime.datetime.now():
+        if True:#until < datetime.datetime.now():
             if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 48):
                 threading.Thread(target=interval3, args=(until + datetime.timedelta(seconds = 1), index + 1, driver,)).start()
             since = until - datetime.timedelta(seconds = 2)
@@ -1437,6 +1438,7 @@ def browser(tweets, driver2):
         else:
             Alert(driver4).accept()
             bin = driver4.execute_script('return window.res')
+            print(bin)
             postrank(bin, driver2, "Today's top 30")
             wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())
             Alert(driver4).accept()
@@ -1560,7 +1562,7 @@ def make_ranking(dict, driver):
                 result = '{:.3f}'.format(res)
                 if winner == "" or result == winner:
                     winner = result
-                    threading.Thread(target=retweet, args=(item["id_str"], driver,)).start()
+                    #threading.Thread(target=retweet, args=(item["id_str"], driver,)).start()
 
                 img_src = "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
                 if item["user"]["profile_image_url_https"] != "":
@@ -1962,7 +1964,7 @@ function final(out6) {
 
 def notice(driver):
     global today_result, world_rank, load_res_yet, driver4
-    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
+    notice_time = start_time
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}
@@ -2026,7 +2028,7 @@ def start():
             get_allresult()
             if len(sys.argv) != 1:
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=240)
-                end_time = times[i][0]
+                end_time = start_time + datetime.timedelta(seconds=60)
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
             threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()

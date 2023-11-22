@@ -1846,8 +1846,8 @@ def start():
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
             print("login", file=sys.stderr)
  
-            threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
-            threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
+            #threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
+            #threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             notice(driver)
             print("notice", file=sys.stderr)
             

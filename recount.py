@@ -506,7 +506,6 @@ xhr.send(JSON.stringify(data));
 
 def reply(req, driver):
     print("reply start", datetime.datetime.now())
-    return
     driver.execute_script("""
 var url = arguments[0];
 var data = JSON.stringify(arguments[1]);
@@ -884,7 +883,7 @@ def interval(since, until, end, index, driver):
         if until < datetime.datetime.now():
             if (end - until).total_seconds() <= 6:
                 add = (end - until).total_seconds()
-            elif datetime.datetime(until.year, until.month, until.day, 22, 28, 0) < datetime.datetime.now() < datetime.datetime(until.year, until.month, until.day, 22, 34, 2):
+            elif datetime.datetime(until.year, until.month, until.day, 3, 28, 0) < datetime.datetime.now() < datetime.datetime(until.year, until.month, until.day, 3, 34, 2):
                 add = 6
             elif index % 12 == 0:
                 add = 6
@@ -1055,7 +1054,7 @@ def interval3(until, index, driver):
         driver3.execute_script("window.search = {};")
     while True:
         if until < datetime.datetime.now():
-            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 0, 48):
+            if until <= datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 48):
                 threading.Thread(target=interval3, args=(until + datetime.timedelta(seconds = 1), index + 1, driver,)).start()
             since = until - datetime.timedelta(seconds = 2)
             driver3.execute_script("""
@@ -1401,7 +1400,6 @@ promise.then((e) => window.data = data2);
         else:
             Alert(driver).accept()
             bin = driver.execute_script('return window.res')
-            print(bin)
             postrank(bin, driver2, "This month's top 30")
             break
 
@@ -1429,7 +1427,6 @@ def browser(tweets, driver2):
         else:
             break
     
-    print("BROWSER", file=sys.stderr)
     for _ in range(5):
         try:
             driver4.execute_script('document.getElementById("input").value = arguments[0]; start();', tweets)
@@ -1439,9 +1436,7 @@ def browser(tweets, driver2):
             time.sleep(1)
         else:
             Alert(driver4).accept()
-            print("ALERT", file=sys.stderr)
             bin = driver4.execute_script('return window.res')
-            print(bin, file=sys.stderr)
             postrank(bin, driver2, "Today's top 30")
             wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())
             Alert(driver4).accept()
@@ -1552,7 +1547,7 @@ def make_ranking2(dict):
                 
 
 def make_ranking(dict, driver):
-    time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 34, 0)
+    time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)
     winner = ""
     users = []
     dict2 = []
@@ -1565,7 +1560,7 @@ def make_ranking(dict, driver):
                 result = '{:.3f}'.format(res)
                 if winner == "" or result == winner:
                     winner = result
-                    #threading.Thread(target=retweet, args=(item["id_str"], driver,)).start()
+                    threading.Thread(target=retweet, args=(item["id_str"], driver,)).start()
 
                 img_src = "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
                 if item["user"]["profile_image_url_https"] != "":
@@ -1581,7 +1576,6 @@ def make_ranking(dict, driver):
                     item["user"]["id_str"]
                 ])
 
-    print("MAKE", file=sys.stderr)
     print(str(dict2))
     threading.Thread(target=browser, args=(str(dict2), driver,)).start()
     threading.Thread(target=make_ranking2, args=(dict2,)).start()
@@ -1589,13 +1583,12 @@ def make_ranking(dict, driver):
     
 
 def get_334(driver):
-    print("GET", file=sys.stderr)
-    time1 = start_time
-    time2 = start_time + datetime.timedelta(seconds=1)
-    get_time = start_time + datetime.timedelta(seconds=1)
+    time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
+    time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
+    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
     while True:
         if get_time < datetime.datetime.now():
-            print("get334 start: ", file=sys.stderr)
+            print("get334 start: ")
             print(datetime.datetime.now())
             driver.execute_script("""
 window.data = "";
@@ -1612,7 +1605,7 @@ cookie.forEach(function (value) {
     if (content[0] == "ct0") token = content[1];
 })
 let time1 = new Date()
-time1.setHours(22);
+time1.setHours(3);
 time1.setMinutes(34);
 time1.setSeconds(0);
 time1.setMilliseconds(0);
@@ -1883,7 +1876,7 @@ function final(out6) {
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")
                 if res != "":
-                    print("get334 conplete: ", file=sys.stderr)
+                    print("get334 conplete: ")
                     print(datetime.datetime.now())
                     make_ranking(res, driver)
                     break
@@ -1893,9 +1886,8 @@ function final(out6) {
 
 
 def notice(driver):
-    print("NOTICE", file=sys.stderr)
     global today_result, world_rank, load_res_yet, driver4
-    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 0, 0)
+    notice_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 32, 0)
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}
@@ -1905,7 +1897,7 @@ def notice(driver):
             req = copy.deepcopy(post_body)
             req["variables"]["tweet_text"] = "334観測中 (" + datetime.datetime.now().date().strftime('%Y/%m/%d') + ")"
             del req["variables"]['reply']
-            print("notice tweet :", file=sys.stderr)
+            print("notice tweet :")
             threading.Thread(target=reply, args=(req, driver,)).start()
     
             break
@@ -1948,7 +1940,7 @@ def start():
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 8, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0)], #8:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 12, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0)], #12:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0)], #16:03
-        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 22, 36, 0)], #20:03
+        [datetime.datetime(start_now.year, start_now.month, start_now.day, 20, 33, 0), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)], #20:03
         [datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1), datetime.datetime(start_now.year, start_now.month, start_now.day, 0, 33, 0) + datetime.timedelta(days=1)]
     ]
     for i in range(len(times)):
@@ -1956,20 +1948,20 @@ def start():
             start_time = times[i][0]
             end_time = times[i][1]
             
-            #get_allresult()
+            get_allresult()
             if len(sys.argv) != 1:
                 start_time = datetime.datetime.now().replace(microsecond = 0) + datetime.timedelta(seconds=240)
-                end_time = start_time + datetime.timedelta(seconds=300)
+                end_time = times[i][0]
             login_twitter("rank334", os.environ['PASS'], os.environ['TEL'], driver)
             login_twitter2("rank334_2", os.environ['PASS'], os.environ['TEL'], driver)
-            #threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
-            #threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
+            threading.Thread(target=interval, args=(start_time, start_time + datetime.timedelta(seconds=5), end_time, 0, driver,)).start()
+            threading.Thread(target=interval2, args=(start_time, end_time, driver,)).start()
             
-            #if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
-            #threading.Thread(target=interval3, args=(start_time + datetime.timedelta(seconds=5), 0, driver,)).start()
-            #get_preresult()
-            notice(driver)
-            get_334(driver)
+            if (len(sys.argv) == 1 and i == 0) or (len(sys.argv) != 1 and i == 1 and datetime.datetime.now() < datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0)):
+                threading.Thread(target=interval3, args=(datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 0), 0, driver,)).start()
+                get_preresult()
+                notice(driver)
+                get_334(driver)
                 
             break
          

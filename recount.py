@@ -1440,7 +1440,6 @@ def browser(tweets, driver2):
             Alert(driver4).accept()
             print("ALERT", file=sys.stderr)
             bin = driver4.execute_script('return window.res')
-            time.sleep(1)
             print(bin, file=sys.stderr)
             postrank(bin, driver2, "Today's top 30")
             wait3 = WebDriverWait(driver4, 300).until(EC.alert_is_present())

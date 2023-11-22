@@ -1561,7 +1561,7 @@ def make_ranking(dict, driver):
                 result = '{:.3f}'.format(res)
                 if winner == "" or result == winner:
                     winner = result
-                    threading.Thread(target=retweet, args=(item["id_str"], driver,)).start()
+                    #threading.Thread(target=retweet, args=(item["id_str"], driver,)).start()
 
                 img_src = "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png"
                 if item["user"]["profile_image_url_https"] != "":

@@ -1335,7 +1335,7 @@ function final(id) {
 def browser2(driver, driver2):
     for _ in range(5):
         try:
-            driver.get(os.environ['HTML_URL2'])
+            driver.get("https://nao-riku.github.io/334Ranker/index2.html")
             wait = WebDriverWait(driver, 60).until(EC.alert_is_present())
             Alert(driver).accept()
             data = driver.execute_script('return window.data')
@@ -1418,7 +1418,7 @@ def browser(tweets, driver2):
                 options.add_argument('--disable-dev-shm-usage')
                 driver4 = webdriver.Chrome(options = options)
                 driver4.set_window_size(620, 1)
-                driver4.get(os.environ['HTML_URL'])
+                driver4.get("https://nao-riku.github.io/334Ranker/index.html")
                 wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
                 Alert(driver4).accept()
             
@@ -1997,7 +1997,7 @@ def start():
             driver3 = webdriver.Chrome(options = options)
             driver4 = webdriver.Chrome(options = options)
             driver4.set_window_size(620, 1)
-            driver4.get(os.environ['HTML_URL'])
+            driver4.get("https://nao-riku.github.io/334Ranker/index.html")
             wait = WebDriverWait(driver4, 10).until(EC.alert_is_present())
             Alert(driver4).accept()
             

@@ -46,6 +46,7 @@ jobs:
         timeout-minutes: 350
         env:
           GAS_URL: ${{ secrets.GAS_URL }}
+          GAS_URL2: ${{ secrets.GAS_URL2 }}
           HTML_URL: ${{ secrets.HTML_URL }}
           HTML_URL2: ${{ secrets.HTML_URL2 }}
           PASS: ${{ secrets.PASS }}

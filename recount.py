@@ -1587,7 +1587,7 @@ def make_ranking(dict, driver):
 def get_334(driver):
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
     time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 1)
-    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 14, 4, 2)
+    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 36, 2)
     while True:
         if get_time < datetime.datetime.now():
             print("get334 start: ")

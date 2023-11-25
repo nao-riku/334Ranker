@@ -1953,6 +1953,30 @@ function final(out6) {
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")
                 if res != "":
+                    add = []
+                    for _ in range(5):
+                        try:
+                            r = requests.get(os.environ['GAS_URL2', timeout=10)
+                            r_json = r.json()
+                            time.sleep(0.5)
+                            add = r_json["data"]
+                            if add = []:
+                                time.sleep(0.5)
+                            else:
+                                break
+                        except Exception as e:
+                            traceback.print_exc()
+                            break
+
+                    res = res + add;
+                    res.sort(key=lambda x: x[1].index)
+                    ids = []
+                    res2 = []
+                    for r in res:
+                        if res.id_str not in ids:
+                            res2.append(r)
+                            ids.append(res.id_str)
+                            
                     print("get334 conplete: ")
                     print(datetime.datetime.now())
                     make_ranking(res, driver)

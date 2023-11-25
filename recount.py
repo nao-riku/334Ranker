@@ -1956,11 +1956,11 @@ function final(out6) {
                     add = []
                     for _ in range(5):
                         try:
-                            r = requests.get(os.environ['GAS_URL2', timeout=10)
+                            r = requests.get(os.environ['GAS_URL2'], timeout=10)
                             r_json = r.json()
                             time.sleep(0.5)
                             add = r_json["data"]
-                            if add = []:
+                            if add == []:
                                 time.sleep(0.5)
                             else:
                                 break
@@ -1968,14 +1968,14 @@ function final(out6) {
                             traceback.print_exc()
                             break
 
-                    res = res + add;
-                    res.sort(key=lambda x: x[1].index)
+                    res = res + add
+                    res.sort(key=lambda x: int(x["index"]))
                     ids = []
                     res2 = []
                     for r in res:
-                        if res.id_str not in ids:
+                        if r["id_str"] not in ids:
                             res2.append(r)
-                            ids.append(res.id_str)
+                            ids.append(r["id_str"])
                             
                     print("get334 conplete: ")
                     print(datetime.datetime.now())

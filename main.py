@@ -1642,7 +1642,7 @@ data2.variables["rawQuery"] = "334 -filter:retweets -filter:quote -from:rank334 
 let queryid2 = get_queryid("SearchTimeline", "KUnA_SzQ4DMxcwWuYZh9qg");
 var count = 0;
 //get_tweets();
-get_tweets2();
+//get_tweets2();
 get_tweets3(data);
 get_tweets4(data2);
 setTimeout(function() { get_tweets5(data2) }, 2000);
@@ -1934,7 +1934,7 @@ function get_tweets5(d) {
 function final(out6) {
     out = out.concat(out6);
     count++;
-    if (count < 4) return;
+    if (count < 3) return;
     let out5 = []
     let ids = [];
     out.sort((a, b) => a.index - b.index);
@@ -1951,9 +1951,35 @@ function final(out6) {
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")
                 if res != "":
+                    print("get334 from Ranker", datetime.datetime.now())
+                    add = []
+                    for _ in range(5):
+                        try:
+                            r = requests.get(os.environ['GAS_URL2'], timeout=10)
+                            r_json = r.json()
+                            time.sleep(0.5)
+                            print("get334 from Ranker2", datetime.datetime.now())
+                            add = r_json["data"]
+                            if add == []:
+                                time.sleep(0.5)
+                            else:
+                                break
+                        except Exception as e:
+                            traceback.print_exc()
+                            break
+
+                    res = res + add
+                    res.sort(key=lambda x: int(x["index"]))
+                    ids = []
+                    res2 = []
+                    for r in res:
+                        if r["id_str"] not in ids:
+                            res2.append(r)
+                            ids.append(r["id_str"])
+
                     print("get334 conplete: ")
                     print(datetime.datetime.now())
-                    make_ranking(res, driver)
+                    make_ranking(res2, driver)
                     break
             break
         time.sleep(0.01)

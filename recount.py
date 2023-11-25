@@ -1587,7 +1587,7 @@ def make_ranking(dict, driver):
 def get_334(driver):
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
     time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 1)
-    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 0, 2)
+    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 2)
     while True:
         if get_time < datetime.datetime.now():
             print("get334 start: ")
@@ -1725,8 +1725,6 @@ function get_tweets2(max_id) {
 }
 
 function get_tweets3(d) {
-final(out3);
-return;
     try {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'https://api.twitter.com/graphql/' + queryid + '/HomeLatestTimeline');
@@ -1955,14 +1953,14 @@ function final(out6) {
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")
                 if res != "":
-                    print("get res", datetime.datetime.now())
+                    print("get334 from Ranker", datetime.datetime.now())
                     add = []
                     for _ in range(5):
                         try:
                             r = requests.get(os.environ['GAS_URL2'], timeout=10)
                             r_json = r.json()
                             time.sleep(0.5)
-                            print("get add", datetime.datetime.now())
+                            print("get334 from Ranker2", datetime.datetime.now())
                             add = r_json["data"]
                             if add == []:
                                 time.sleep(0.5)

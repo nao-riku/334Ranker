@@ -1587,7 +1587,7 @@ def make_ranking(dict, driver):
 def get_334(driver):
     time1 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 33, 59)
     time2 = datetime.datetime(start_now.year, start_now.month, start_now.day, 3, 34, 1)
-    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 15, 36, 2)
+    get_time = datetime.datetime(start_now.year, start_now.month, start_now.day, 16, 0, 2)
     while True:
         if get_time < datetime.datetime.now():
             print("get334 start: ")
@@ -1992,7 +1992,7 @@ function final(out6) {
 
 def notice(driver):
     global today_result, world_rank, load_res_yet, driver4
-    notice_time = start_time
+    notice_time = datetime.datetime.now()
     while True:
         if notice_time < datetime.datetime.now():
             today_result = {}

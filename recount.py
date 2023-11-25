@@ -1953,12 +1953,14 @@ function final(out6) {
                 time.sleep(0.01)
                 res = driver.execute_script("return window.data")
                 if res != "":
+                    print("get res", datetime.datetime.now())
                     add = []
                     for _ in range(5):
                         try:
                             r = requests.get(os.environ['GAS_URL2'], timeout=10)
                             r_json = r.json()
                             time.sleep(0.5)
+                            print("get add", datetime.datetime.now())
                             add = r_json["data"]
                             if add == []:
                                 time.sleep(0.5)

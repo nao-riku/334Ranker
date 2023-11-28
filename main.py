@@ -48,14 +48,18 @@ end_time = ""
 def get_allresult():
     global today_result, world_rank, load_res_yet
     load_res_yet = False
-    try:
-        r = requests.get(os.environ['GAS_URL'])
-        r_json = r.json()
-        time.sleep(0.5)
-        today_result = r_json["result"]
-        world_rank = r_json["rank"]
-    except Exception as e:
-        traceback.print_exc()
+    for _ in range(5):
+        try:
+            r = requests.get(os.environ['GAS_URL'])
+            r_json = r.json()
+            time.sleep(0.5)
+            today_result = r_json["result"]
+            world_rank = r_json["rank"]
+        except Exception as e:
+            traceback.print_exc()
+            time.sleep(2)
+        else:
+            break
     if today_result == {} or world_rank == {}:
         load_res_yet = True
     else:

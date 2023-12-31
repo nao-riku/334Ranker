@@ -420,7 +420,8 @@ def login_twitter2(account, password, tel, driver):
                     driver3.get('https://twitter.com/Rank334_2/status/1705386885135343879')
                     element = WebDriverWait(driver3, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "[role=textbox]")))
                 except:
-                    sys.exit(1)
+                    #sys.exit(1)
+                    pass
                     break
             time.sleep(1)
 
